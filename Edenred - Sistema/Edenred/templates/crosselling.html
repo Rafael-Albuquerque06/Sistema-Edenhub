@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        {% include 'nav.html' %}
+    </div>
+</div>
+
+<!-- ETAPA 1: CONSULTA CNPJ -->
+{% if etapa == 'cnpj' %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-edenred">
+            <div class="card-body">
+                <h3 class="card-title text-center text-dark mb-4">Consultar disponibilidade do CNPJ da Empresa*</h3>
+
+                <form method="post" class="mt-4">
+                    <div class="mb-3">
+                        <label for="cnpj" class="form-label text-dark"><strong>CNPJ*</strong></label>
+                        <input type="text" class="form-control" id="cnpj" name="cnpj"
+                            placeholder="CNPJ" pattern="[0-9]{14}"
+                            title="Digite exatamente 14 números" style="font-size: 16px; padding: 12px;">
+                        <div class="form-text text-muted">
+                            <strong>Qualquer CNPJ com 14 dígitos</strong>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-edenred btn-lg">Iniciar Cross-Selling</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ETAPA 2: DECISÃO -->
+{% elif etapa == 'decisao' %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-edenred">
+            <div class="card-body text-center">
+                <h4 class="text-dark">CNPJ: {{ cnpj[:2] }}.{{ cnpj[2:5] }}.{{ cnpj[5:8] }}/{{ cnpj[8:12] }}-{{ cnpj[12:]
+                    }}</h4>
+
+                {% if empresa %}
+                <div class="alert alert-info">
+                    <strong>Empresa encontrada:</strong> {{ empresa.razao_social }}
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <strong>Nova empresa:</strong> Será criado um novo cadastro
+                </div>
+                {% endif %}
+
+                <p class="text-dark mb-4">O que deseja fazer?</p>
+
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('crosselling', etapa='decisao', cnpj=cnpj, acao='segue') }}"
+                        class="btn btn-success btn-lg">Continuar Processo</a>
+                    <a href="{{ url_for('crosselling', etapa='decisao', cnpj=cnpj, acao='corrige') }}"
+                        class="btn btn-warning">Corrigir CNPJ</a>
+                    <a href="{{ url_for('crosselling', etapa='decisao', cnpj=cnpj, acao='cancela') }}"
+                        class="btn btn-danger">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ETAPA 3: CADASTRO BÁSICO (só aparece se empresa não existe) -->
+{% elif etapa == 'cadastro' %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-edenred">
+            <div class="card-body">
+                <h3 class="card-title text-center text-dark mb-4">Cadastro Básico da Empresa</h3>
+                <p class="text-center text-muted">CNPJ: {{ cnpj[:2] }}.{{ cnpj[2:5] }}.{{ cnpj[5:8] }}/{{ cnpj[8:12]
+                    }}-{{ cnpj[12:] }}</p>
+
+                <form method="post" class="mt-4">
+                    {{ form_basico.csrf_token }}
+
+                    <h5 class="text-dark mt-4">Dados da Empresa</h5>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_basico.razao_social.label(class="form-label text-dark") }}
+                            {{ form_basico.razao_social(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            {{ form_basico.cep.label(class="form-label text-dark") }}
+                            {{ form_basico.cep(class="form-control") }}
+                        </div>
+                        <div class="col-md-8">
+                            {{ form_basico.logradouro.label(class="form-label text-dark") }}
+                            {{ form_basico.logradouro(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            {{ form_basico.numero.label(class="form-label text-dark") }}
+                            {{ form_basico.numero(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_basico.complemento.label(class="form-label text-dark") }}
+                            {{ form_basico.complemento(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_basico.bairro.label(class="form-label text-dark") }}
+                            {{ form_basico.bairro(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-8">
+                            {{ form_basico.municipio.label(class="form-label text-dark") }}
+                            {{ form_basico.municipio(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_basico.estado.label(class="form-label text-dark") }}
+                            {{ form_basico.estado(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <h5 class="text-dark mt-4">Contato</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_basico.nome_contato.label(class="form-label text-dark") }}
+                            {{ form_basico.nome_contato(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_basico.email_contato.label(class="form-label text-dark") }}
+                            {{ form_basico.email_contato(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            {{ form_basico.telefone_contato.label(class="form-label text-dark") }}
+                            {{ form_basico.telefone_contato(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_basico.cargo_contato.label(class="form-label text-dark") }}
+                            {{ form_basico.cargo_contato(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_basico.departamento_contato.label(class="form-label text-dark") }}
+                            {{ form_basico.departamento_contato(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            {{ form_basico.celular_contato.label(class="form-label text-dark") }}
+                            {{ form_basico.celular_contato(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        {{ form_basico.btnSubmitBasico(class="btn btn-edenred btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ETAPA 4: ESCOLHA DO BU -->
+{% elif etapa == 'bu' %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-edenred">
+            <div class="card-body">
+                <h3 class="card-title text-center text-dark mb-4">Escolha do BU</h3>
+                <p class="text-center text-muted">Empresa: {{ empresa.razao_social }}</p>
+
+                <form method="post" class="mt-4" id="buForm">
+                    {{ form_bu.csrf_token }}
+
+                    <div class="mb-4">
+                        {{ form_bu.bu_escolhido.label(class="form-label text-dark h5") }}
+                        {{ form_bu.bu_escolhido(class="form-select form-select-lg", id="buEscolhido") }}
+                        {% if form_bu.bu_escolhido.errors %}
+                        <div class="text-danger">
+                            {% for error in form_bu.bu_escolhido.errors %}
+                            <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_bu.acao.label(class="form-label text-dark h5") }}
+                        {{ form_bu.acao(class="form-select form-select-lg") }}
+                        {% if form_bu.acao.errors %}
+                        <div class="text-danger">
+                            {% for error in form_bu.acao.errors %}
+                            <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="mb-4">
+                            <label class="form-label text-dark h5">Selecione os produtos disponíveis*</label>
+                            <div class="mt-2" id="produtosContainer">
+                                <div class="text-muted">Selecione um BU primeiro para ver os produtos disponíveis</div>
+                            </div>
+                            <!-- Campo hidden para o WTForms -->
+                            <select name="produtos" id="produtosHidden" multiple style="display: none;">
+                                <!-- Será preenchido via JavaScript -->
+                            </select>
+                            <div id="produtosError" class="text-danger" style="display: none;">
+                                <small>Por favor, selecione pelo menos um produto</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form_bu.btnSubmitBU(class="btn btn-edenred btn-lg", id="submitBtn") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{url_for('static', filename = 'js/script.js')}}"></script>
+
+<!-- ETAPA 5: INDICAÇÃO -->
+{% elif etapa == 'indicacao' %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-edenred">
+            <div class="card-body">
+                <h3 class="card-title text-center text-dark mb-4">Indicação {{ bu }}</h3>
+                <p class="text-center text-muted">Solicitante: {{ current_user.nome }}</p>
+                <p class="text-center text-muted">Empresa: {{ empresa.razao_social }}</p>
+
+                <form method="post" class="mt-4">
+                    {{ form_indicacao.csrf_token }}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_indicacao.quantidade_caminhoes.label(class="form-label text-dark") }}
+                            {{ form_indicacao.quantidade_caminhoes(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_indicacao.quantidade_funcionarios.label(class="form-label text-dark") }}
+                            {{ form_indicacao.quantidade_funcionarios(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            {{ form_indicacao.quantidade_veiculos_pesados.label(class="form-label text-dark") }}
+                            {{ form_indicacao.quantidade_veiculos_pesados(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-dark">Subsidia combustível?</label>
+                            <div class="mt-2">
+                                {{ form_indicacao.subsidia_combustivel(class="form-check-input") }}
+                                {{ form_indicacao.subsidia_combustivel.label(class="form-check-label text-dark ms-2") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            {{ form_indicacao.quantidade_veiculos_leves.label(class="form-label text-dark") }}
+                            {{ form_indicacao.quantidade_veiculos_leves(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_indicacao.quantidade_veiculos.label(class="form-label text-dark") }}
+                            {{ form_indicacao.quantidade_veiculos(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            {{ form_indicacao.previsao_volume.label(class="form-label text-dark") }}
+                            {{ form_indicacao.previsao_volume(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_indicacao.quantidade_cartoes.label(class="form-label text-dark") }}
+                            {{ form_indicacao.quantidade_cartoes(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        {{ form_indicacao.observacoes.label(class="form-label text-dark") }}
+                        {{ form_indicacao.observacoes(class="form-control", rows="4") }}
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        {{ form_indicacao.btnSubmitIndicacao(class="btn btn-edenred btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

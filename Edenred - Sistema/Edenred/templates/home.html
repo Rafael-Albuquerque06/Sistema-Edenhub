@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        {% include 'nav.html' %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4 text-dark">Bem vindo ao Território</h1>
+        
+        <div class="mb-4">
+            <div class="row">
+                <p class="card-text text-dark">
+                    Ao acessar a plataforma você poderá, de forma rápida e fácil, comunicar-se e trocar ideias e opiniões com outros usuários através do módulo de comunicação.
+                    É possível também acompanhar suas pendências, usando a visão por SLA ou por prazo.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Funcionalidades Principais -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="text-dark mb-3"></h3>
+    </div>
+    
+    <!-- Cross-Selling -->
+    <div class="col-md-3 mb-3">
+        <a href="{{ url_for('crosselling') }}" class="text-decoration-none">
+            <div class="card card-edenred funcionalidade-card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-dark">Cross-Selling</h5>
+                    <p class="card-text text-muted">Iniciar processo de vendas</p>
+                    <button class="btn btn-edenred">Iniciar</button>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+    <!-- Cross-Selling Lote -->
+    <div class="col-md-3 mb-3">
+        <div class="card card-edenred funcionalidade-card h-100" onclick="this.style.transform='translateY(-5px)'">
+            <div class="card-body text-center">
+                <h5 class="card-title text-dark">Cross-Selling Lote</h5>
+                <p class="card-text text-muted">Processamento em lote</p>
+                <button class="btn btn-edenred">Iniciar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DC-Documento -->
+    <div class="col-md-3 mb-3">
+        <div class="card card-edenred funcionalidade-card h-100" onclick="this.style.transform='translateY(-5px)'">
+            <div class="card-body text-center">
+                <h5 class="card-title text-dark">DC-Documento</h5>
+                <p class="card-text text-muted">Gestão documental</p>
+                <button class="btn btn-edenred">Iniciar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FL-Finalizar Itens em Lote -->
+    <div class="col-md-3 mb-3">
+        <div class="card card-edenred funcionalidade-card h-100" onclick="this.style.transform='translateY(-5px)'">
+            <div class="card-body text-center">
+                <h5 class="card-title text-dark">FL-Finalizar Itens em Lote</h5>
+                <p class="card-text text-muted">Finalização em massa</p>
+                <button class="btn btn-edenred">Iniciar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pendências -->
+<div class="row">
+    <!-- Minhas Pendências -->
+    <div class="col-md-6 mb-3">
+        <a href="{{ url_for('minhas_pendencias') }}" class="text-decoration-none">
+            <div class="card card-edenred funcionalidade-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-dark">Minhas Pendências</h5>
+                    <h3 class="text-edenred">{{ minhas_pendencias }}</h3>
+                    <p class="card-text text-muted">Indicações pendentes do usuário</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+    <!-- Pendências da Equipe -->
+    <div class="col-md-6 mb-3">
+        <div class="card card-edenred funcionalidade-card h-100" onclick="this.style.transform='translateY(-5px)'">
+            <div class="card-body">
+                <h5 class="card-title text-dark">Pendências da Equipe</h5>
+                <h3 class="text-danger">1984</h3>
+                <p class="card-text text-muted">Pendências do grupo</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

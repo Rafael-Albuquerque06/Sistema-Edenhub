@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        {% include 'nav.html' %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4 text-dark">Minhas Pendências</h1>
+        
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-edenred">
+                    <tr>
+                        <th>Empresa</th>
+                        <th>CNPJ</th>
+                        <th>BU Indicado</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for indicacao in indicacoes %}
+                    <tr>
+                        <td class="text-dark">{{ indicacao.empresa.razao_social }}</td>
+                        <td class="text-dark">{{ indicacao.empresa.cnpj }}</td>
+                        <td class="text-dark">{{ indicacao.bu_indicado }}</td>
+                        <td class="text-dark">{{ indicacao.data_indicacao.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if indicacao.status == 'Pendente' %}
+                                <span class="badge bg-warning text-dark">{{ indicacao.status }}</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ indicacao.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-dark">Nenhuma pendência encontrada</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

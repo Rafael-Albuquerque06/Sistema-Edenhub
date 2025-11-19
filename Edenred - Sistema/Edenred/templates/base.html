@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Edenhub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .bg-edenred {
+            background-color: #8B0000 !important;
+        }
+        .text-edenred {
+            color: #8B0000 !important;
+        }
+        .border-edenred {
+            border-color: #8B0000 !important;
+        }
+        .btn-edenred {
+            background-color: #8B0000;
+            border-color: #8B0000;
+            color: white;
+        }
+        .btn-edenred:hover {
+            background-color: #A52A2A;
+            border-color: #A52A2A;
+            color: white;
+        }
+        .card-edenred {
+            border: 2px solid #8B0000;
+            box-shadow: 0 4px 6px rgba(139, 0, 0, 0.1);
+        }
+        .table-edenred thead {
+            background-color: #8B0000;
+            color: white;
+        }
+        .nav-menu {
+            background-color: #B22222 !important; /* Vermelho mais claro */
+        }
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        .funcionalidade-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .funcionalidade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(139, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-edenred">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <strong>Sistema Edenhub</strong>
+            </a>
+            
+            {% if current_user.is_authenticated %}
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3 text-white">
+                    Olá, {{ current_user.nome }}
+                </span>
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">
+                    Sair
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

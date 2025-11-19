@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        {% include 'nav.html' %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 h-100">
+        <h1 class="text-center mb-4 text-dark">Catálogo de Produtos/Serviços</h1>
+
+        <div class="row display: flex; alin-items: center">
+            {% for bu in bus %}
+            <div class="col-12 md-4 mb-4">
+                <div class="card card-edenred h-100">
+                    <div class="card-body fluid">
+                        <h5 class="card-title text-dark text-center fw-bold">{{ bu }}</h5>
+                        <p class="card-text text-dark">
+                            {% if bu == 'Edenred Pay' %}
+                        <div class="row">
+                            <div class="col 6">
+                                <img src="{{url_for('static', filename='img/pay.png')}}" alt="Edenred Pay" width="450px"
+                                    class="rounded-circle">
+                            </div>
+                            <div class="col 6 mt-5 text-center">
+                                <h4 class="fw-bold ">Simplificamo e otimizamos o gerenciamento das suas despesas.</h4>
+                                <br>
+                                <h4 class="fw-bold">Facilitamos o dia a dia da sua empresa e dos seus colaboradores.
+                                </h4>
+                                <br>
+                                <h4 class="fw-bold">Desburocratizamos e automatizamos os pagamentos de terceiros e
+                                    bonificações.</h4>
+                                <br>
+                                <h4 class="fw-bold">Tranformamos a rotina com inovação e eficiência.</h4>
+
+                                <a href="{{ url_for('crosselling') }}"
+                                    class="btn btn-danger btn-lg mt-5 rounded-pill shadow">Contrate
+                                    agora</a>
+
+                                <a href="" class="btn btn-success btn-lg mt-5 rounded-pill shadow">Compartilhar via
+                                    Whatssap</a>
+                            </div>
+                        </div>
+                        {% elif bu == 'Ticket Log' %}
+                        <div class="row top-0 mb-5">
+                            <div class="col-12 alin-items-center text-center mb-4">
+                                <img src="{{url_for('static', filename='img/mobilidade2.png')}}" alt="Ticket log"
+                                    width="600px" class="rounded-pill">
+                            </div>
+                            <hr>
+                            <div class="col-3 p-4 m-5">
+                                <h4 class="fw-bold">Gestão de combustível com foco em segurança e economia.</h4>
+                            </div>
+                            <div class="col-6 p-3 m-5">
+                                <h4 class="fw-bold">Edenred Ticket log é lider em soluções de mobilidade e é um parceiro
+                                    que indico para alcançar soluções de mobilidade.</h4>
+                            </div>
+                            <div class="col-3">
+                                <h5 class="text-danger m-5">Fale comigo para saber mais! www.edenred.com </h5>
+                            </div>
+                            <div class="col-9 mt-5 text-center">
+                                <a href="{{ url_for('crosselling') }}"
+                                    class="btn btn-danger btn-lg mt-5 rounded-pill shadow">Contrate
+                                    agora</a>
+                                <a href="" class="btn btn-success btn-lg mt-5 rounded-pill shadow">Compartilhar via
+                                    Whatssap</a>
+                                <img src="{{url_for('static', filename='img/estampa.png')}}" alt="logo" width="200px"
+                                    class="border border-dark rounded-pill p-3 m-5 float-end">
+                            </div>
+                        </div>
+                        {% elif bu == 'Ticket Serviços' %}
+                        <div class="row">
+                            <div class="col 6 mt-4 text-center">
+                                <h1 class="fw-bold">Ticket restaurante: o seu vale refeição completo</h1>
+
+                                <h5 class="m-5">Liberdade de escolha é o que deixa qualquer refeição mais saborosa.Com o
+                                    nosso Ticket Restaurante em mão ,sua equipe tem muito mais opções para se alimentar
+                                    de forma saúdavel e deliciosa.Tudo isso por conta de uma rede com cerca de 720mil
+                                    estabelecimentos credenciados que aceitem nosso vale refeição.</h5>
+
+                                <a href="{{ url_for('crosselling') }}"
+                                    class="btn btn-danger btn-lg mt-5 rounded-pill shadow">Contrate
+                                    agora</a>
+                                <a href="" class="btn btn-success btn-lg mt-5 rounded-pill shadow">Compartilhar via
+                                    Whatssap</a>
+                            </div>
+                            <div class="col 6">
+                                <img src="{{url_for('static', filename='img/beneficio.png')}}" alt="Ticket Serviços"
+                                    width="450px" class="float-end">
+                            </div>
+                        </div>
+                        {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

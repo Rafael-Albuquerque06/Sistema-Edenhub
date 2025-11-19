@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-edenred">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4 text-dark">Entrar</h3>
+                
+                <form method="post">
+                    {{ form.csrf_token }}
+                    
+                    <div class="mb-3">
+                        {{ form.login.label(class="form-label text-dark") }}
+                        {{ form.login(class="form-control", placeholder="Email, telefone ou Skype") }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.senha.label(class="form-label text-dark") }}
+                        {{ form.senha(class="form-control", placeholder="Senha") }}
+                    </div>
+                    
+                    <div class="d-grid">
+                        {{ form.btnSubmit(class="btn btn-edenred btn-lg") }}
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="#" class="text-muted">Não consigo acessar minha conta?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
