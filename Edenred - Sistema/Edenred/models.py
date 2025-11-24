@@ -1,5 +1,5 @@
-from Edenred import db
-from datetime import datetime, timezone
+from Edenred import db,bcrypt
+from datetime import datetime, timezone, timedelta
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -7,15 +7,16 @@ class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    telefone = db.Column(db.String(20))
-    skype = db.Column(db.String(100))
+    telefone = db.Column(db.String(20), unique=True)
+    skype = db.Column(db.String(100), unique=True)
     senha_hash = db.Column(db.String(200), nullable=False)
     
     def set_senha(self, senha):
-        self.senha_hash = generate_password_hash(senha)
+        #Define a senha usando bcrypt
+        self.senha_hash = bcrypt.generate_password_hash(senha.encode('utf-8'))
     
     def check_senha(self, senha):
-        return check_password_hash(self.senha_hash, senha)
+        return bcrypt.check_password_hash(self.senha_hash, senha.encode('utf-8'))
 
 class Empresa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,4 +64,26 @@ class Indicacao(db.Model):
     
     empresa = db.relationship('Empresa', backref=db.backref('indicacoes', lazy=True))
     usuario = db.relationship('Usuario', backref=db.backref('indicacoes', lazy=True))
+    
+    def verificar_duplicidade(cnpj_empresa, produtos, periodo_meses=3):
+        
+        #Verifica se já existe indicação para o mesmo CNPJ e produtos dentro do período especificado
+        
+        # Calcula a data limite (Período considerado recente)
+        data_limite = datetime.now(timezone.utc) - timedelta(days=periodo_meses*30)
+        
+        # Busca todas as indicações recentes para este CNPJ
+        indicacoes_recentes = Indicacao.query.join(Empresa).filter(
+            Empresa.cnpj == cnpj_empresa,
+            Indicacao.data_indicacao >= data_limite
+        ).all()
+        
+        # Verifica se algum produto já foi indicado
+        produtos_duplicados = []
+        for indicacao in indicacoes_recentes:
+            for produto in produtos:
+                if produto in indicacao.produtos_escolhidos:
+                    produtos_duplicados.append(produto)
+        
+        return produtos_duplicados
 

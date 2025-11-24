@@ -11,13 +11,27 @@
                     {{ form.csrf_token }}
                     
                     <div class="mb-3">
-                        {{ form.login.label(class="form-label text-dark") }}
-                        {{ form.login(class="form-control", placeholder="Email, telefone ou Skype") }}
+                        {{ form.usuario_login.label(class="form-label text-dark") }}  <!-- 🔥 MUDAR AQUI -->
+                        {{ form.usuario_login(class="form-control", placeholder="Email, telefone ou Skype") }}  <!-- 🔥 MUDAR AQUI -->
+                        {% if form.usuario_login.errors %}  <!-- 🔥 MUDAR AQUI -->
+                            <div class="text-danger">
+                                {% for error in form.usuario_login.errors %}  <!-- 🔥 MUDAR AQUI -->
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="mb-3">
                         {{ form.senha.label(class="form-label text-dark") }}
                         {{ form.senha(class="form-control", placeholder="Senha") }}
+                        {% if form.senha.errors %}
+                            <div class="text-danger">
+                                {% for error in form.senha.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="d-grid">
@@ -26,7 +40,8 @@
                 </form>
                 
                 <div class="text-center mt-3">
-                    <a href="#" class="text-muted">Não consigo acessar minha conta?</a>
+                    <a href="{{ url_for('cadastro') }}" class="text-muted"> Cadastre-se</a>
+                    <br>
                 </div>
             </div>
         </div>

@@ -18,6 +18,7 @@
                         <th>Empresa</th>
                         <th>CNPJ</th>
                         <th>BU Indicado</th>
+                        <th>Produtos</th>
                         <th>Data</th>
                         <th>Status</th>
                     </tr>
@@ -28,6 +29,7 @@
                         <td class="text-dark">{{ indicacao.empresa.razao_social }}</td>
                         <td class="text-dark">{{ indicacao.empresa.cnpj }}</td>
                         <td class="text-dark">{{ indicacao.bu_indicado }}</td>
+                        <td class="text-dark">{{ indicacao.produtos_escolhidos}}</td>
                         <td class="text-dark">{{ indicacao.data_indicacao.strftime('%d/%m/%Y') }}</td>
                         <td>
                             {% if indicacao.status == 'Pendente' %}
@@ -39,7 +41,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="5" class="text-center text-dark">Nenhuma pendência encontrada</td>
+                        <td colspan="5" class="text-center text-dark ">Nenhuma pendência encontrada</td>
                     </tr>
                     {% endfor %}
                 </tbody>

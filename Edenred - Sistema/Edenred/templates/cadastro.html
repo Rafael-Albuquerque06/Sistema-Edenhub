@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-edenred">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4 text-dark">Cadastrar Usuário</h3>
+
+                <p class="text-center">( * ) Dado obrigatório.</p>
+                
+                <form method="post">
+                    {{ form.csrf_token }}
+                    
+                    <div class="mb-3">
+                        {{ form.nome.label(class="form-label text-dark") }}
+                        {{ form.nome(class="form-control", placeholder="Seu nome completo") }}
+                        {% if form.nome.errors %}
+                            <div class="text-danger">
+                                {% for error in form.nome.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label text-dark") }}
+                        {{ form.email(class="form-control", placeholder="seu@email.com") }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">
+                                {% for error in form.email.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.telefone.label(class="form-label text-dark") }}
+                            {{ form.telefone(class="form-control", placeholder="(11) 99999-9999") }}
+                            {% if form.telefone.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.telefone.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.skype.label(class="form-label text-dark") }}
+                            {{ form.skype(class="form-control", placeholder="Seu Skype (opcional)") }}
+                            {% if form.skype.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.skype.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.senha.label(class="form-label text-dark") }}
+                        {{ form.senha(class="form-control", placeholder="Mínimo 6 caracteres") }}
+                        {% if form.senha.errors %}
+                            <div class="text-danger">
+                                {% for error in form.senha.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.confirmar_senha.label(class="form-label text-dark") }}
+                        {{ form.confirmar_senha(class="form-control", placeholder="Digite a senha novamente") }}
+                        {% if form.confirmar_senha.errors %}
+                            <div class="text-danger">
+                                {% for error in form.confirmar_senha.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid">
+                        {{ form.btnSubmit(class="btn btn-edenred btn-lg") }}
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('login') }}" class="text-muted">Já tem conta? Faça login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

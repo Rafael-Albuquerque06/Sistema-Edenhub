@@ -1,26 +1,26 @@
 from Edenred import app, db
 from flask import render_template, url_for, request, redirect, flash, jsonify
 from Edenred.models import Usuario, Empresa, Indicacao
-from Edenred.forms import LoginForm, CadastroBasicoForm, BUForm, IndicacaoForm
+from Edenred.forms import LoginForm, CadastroBasicoForm, BUForm, IndicacaoForm, CadastroUsuarioForm
 from flask_login import login_user, logout_user, login_required, current_user
-
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    
     if form.validate_on_submit():
-        login_info = form.login.data
+        login_info = form.usuario_login.data
         senha = form.senha.data
         
-        # Buscar usuário por email, telefone ou Skype
+        # Buscar usuário por email, telefone ou Skype - MESMA LÓGICA DO MATERIAL
         usuario = Usuario.query.filter(
             (Usuario.email == login_info) | 
             (Usuario.telefone == login_info) | 
             (Usuario.skype == login_info)
         ).first()
         
+        # 🔥 VERIFICAÇÃO COM BCRYrypt (igual material de estudo)
         if usuario and usuario.check_senha(senha):
             login_user(usuario)
             flash('Login realizado com sucesso!', 'success')
@@ -29,6 +29,24 @@ def login():
             flash('Login ou senha incorretos!', 'error')
     
     return render_template('login.html', form=form)
+
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    form = CadastroUsuarioForm()
+    
+    if form.validate_on_submit():
+        try:
+            # 🔥 AGORA USA O save() QUE USA BCRYPT (igual material de estudo)
+            usuario = form.save()
+            
+            flash('Cadastro realizado com sucesso! Faça login para continuar.', 'success')
+            return redirect(url_for('login'))
+        
+        except Exception as e:
+            db.session.rollback()
+            flash('Erro ao cadastrar usuário. Tente novamente.', 'error')
+    
+    return render_template('cadastro.html', form=form)
 
 @app.route('/logout')
 @login_required
@@ -109,27 +127,9 @@ def crosselling():
         
         if request.method == 'POST':
             if form_basico.validate_on_submit():
-                # Salvar empresa no banco
-                empresa = Empresa(
-                    cnpj=cnpj,
-                    razao_social=form_basico.razao_social.data,
-                    cep=form_basico.cep.data,
-                    logradouro=form_basico.logradouro.data,
-                    numero=form_basico.numero.data,
-                    complemento=form_basico.complemento.data,
-                    bairro=form_basico.bairro.data,
-                    municipio=form_basico.municipio.data,
-                    estado=form_basico.estado.data,
-                    nome_contato=form_basico.nome_contato.data,
-                    email_contato=form_basico.email_contato.data,
-                    telefone_contato=form_basico.telefone_contato.data,
-                    cargo_contato=form_basico.cargo_contato.data,
-                    departamento_contato=form_basico.departamento_contato.data,
-                    celular_contato=form_basico.celular_contato.data,
-                    eh_cliente=False
-                )
-                db.session.add(empresa)
-                db.session.commit()
+                # 🔥 AGORA É SUPER SIMPLES: apenas chamar .save() no formulário
+                empresa = form_basico.save(cnpj)
+                
                 flash('Cadastro básico salvo com sucesso!', 'success')
                 return redirect(url_for('crosselling', etapa='bu', empresa_id=empresa.id))
             else:
@@ -182,53 +182,45 @@ def crosselling():
         
         if request.method == 'POST':
             if form_indicacao.validate_on_submit():
-                # Salvar indicação
-                indicacao = Indicacao(
-                    empresa_id=empresa_id,
-                    usuario_id=current_user.id,
-                    bu_indicado=bu,
-                    produtos_escolhidos=produtos,
-                    quantidade_caminhoes=form_indicacao.quantidade_caminhoes.data,
-                    quantidade_funcionarios=form_indicacao.quantidade_funcionarios.data,
-                    quantidade_veiculos_pesados=form_indicacao.quantidade_veiculos_pesados.data,
-                    subsidia_combustivel=form_indicacao.subsidia_combustivel.data,
-                    quantidade_veiculos_leves=form_indicacao.quantidade_veiculos_leves.data,
-                    quantidade_veiculos=form_indicacao.quantidade_veiculos.data,
-                    previsao_volume=form_indicacao.previsao_volume.data,
-                    quantidade_cartoes=form_indicacao.quantidade_cartoes.data,
-                    observacoes=form_indicacao.observacoes.data,
-                    status='Pendente'
+                # Verificação de duplicidade (mantém igual)
+                produtos_lista = produtos.split(", ")
+                produtos_duplicados = Indicacao.verificar_duplicidade(
+                    empresa.cnpj, 
+                    produtos_lista
                 )
-                db.session.add(indicacao)
-                db.session.commit()
+                
+                if produtos_duplicados:
+                    flash('Indicação bloqueada! Produtos já indicados recentemente (ultimos 3 meses).', 'error')
+                    return render_template('crosselling.html', etapa='indicacao', form_indicacao=form_indicacao, empresa=empresa, bu=bu, produtos=produtos)
+                
+                # 🔥 AGORA É SUPER SIMPLES: apenas chamar .save() no formulário
+                form_indicacao.save(empresa_id, current_user.id, bu, produtos)
+                
                 flash('Solicitação encaminhada com sucesso! Em breve você será informado do parecer da análise. Obrigado!', 'success')
                 return redirect(url_for('home'))
             else:
                 flash('Por favor, preencha pelo menos a quantidade de cartões.', 'error')
         
         return render_template('crosselling.html', etapa='indicacao', form_indicacao=form_indicacao, empresa=empresa, bu=bu, produtos=produtos)
-    
-    # CASO DE FALHA: Se nenhuma etapa for reconhecida, volta para o início
-    return redirect(url_for('crosselling', etapa='cnpj'))
-        
+
 @app.route('/consulta_clientes')
 @login_required
 def consulta_clientes():
     pesquisa = request.args.get('pesquisa', '')
-    
-    # Buscar apenas empresas que são clientes
+        
+        # Buscar apenas empresas que são clientes
     query = Empresa.query.filter_by(eh_cliente=True)
-    
+        
     if pesquisa:
-        query = query.filter(
-            (Empresa.razao_social.contains(pesquisa)) |
-            (Empresa.cnpj.contains(pesquisa)) |
-            (Empresa.municipio.contains(pesquisa))
-        )
-    
+            query = query.filter(
+                (Empresa.razao_social.contains(pesquisa)) |
+                (Empresa.cnpj.contains(pesquisa)) |
+                (Empresa.municipio.contains(pesquisa))
+            )
+        
     clientes = query.order_by(Empresa.razao_social).all()
-    
-    # Adicionar informações de indicações pendentes
+        
+        # Adicionar informações de indicações pendentes
     for cliente in clientes:
         indicacoes_pendentes = Indicacao.query.filter_by(
             empresa_id=cliente.id, 
@@ -236,7 +228,7 @@ def consulta_clientes():
         ).all()
         cliente.indicacoes_pendentes = len(indicacoes_pendentes)
         cliente.bus_list = cliente.bus_contratados.split(', ') if cliente.bus_contratados else []
-    
+        
     return render_template('consulta_clientes.html', clientes=clientes, pesquisa=pesquisa)
 
 @app.route('/minhas_pendencias')

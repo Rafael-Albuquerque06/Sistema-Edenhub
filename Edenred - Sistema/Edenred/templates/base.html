@@ -64,7 +64,7 @@
             {% if current_user.is_authenticated %}
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3 text-white">
-                    Olá, {{ current_user.nome }}
+                    {{ current_user.nome }}
                 </span>
                 <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">
                     Sair
