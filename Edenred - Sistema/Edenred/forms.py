@@ -1,9 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, FloatField, TextAreaField, SelectMultipleField, widgets
+from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, FloatField, TextAreaField, SelectMultipleField, FileField,widgets
 from wtforms.validators import DataRequired, Email, Length, Optional, equal_to,ValidationError
 from Edenred.models import Usuario, Empresa, Indicacao
-from Edenred import db, bcrypt
+
+from Edenred import db, app, bcrypt
 from wtforms.widgets import ListWidget, CheckboxInput
+
+import os
+from werkzeug.utils import secure_filename
 
 class LoginForm(FlaskForm):
     usuario_login = StringField('Email, telefone ou Skype', validators=[DataRequired()])
@@ -13,6 +17,7 @@ class LoginForm(FlaskForm):
     
 
 class CadastroUsuarioForm(FlaskForm):
+    foto = FileField('Foto', validators=[Optional()])
     nome = StringField('Nome Completo*', validators=[DataRequired()])
     email = StringField('E-mail*', validators=[DataRequired(), Email()])
     telefone = StringField('Telefone*', validators=[DataRequired()])
@@ -42,14 +47,35 @@ class CadastroUsuarioForm(FlaskForm):
     
     
     def save(self):
-        """Cria e salva um novo usuário - MESMA LÓGICA DO MATERIAL DE ESTUDO"""
+        #Cria e salva um novo usuário
+        foto = self.foto.data
+        
+        nome_seguro = 'default.png'  # Valor padrão
+        
+        # Só processa a foto se foi enviada
+        if foto and foto.filename:
+            nome_seguro = secure_filename(foto.filename)
+            
+            caminho = os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                app.config['UPLOAD_FILES'],
+                'img_user',
+                nome_seguro
+            )
+            
+            # Salva o arquivo apenas se foi enviado
+            foto.save(caminho)
+        
         usuario = Usuario(
             nome=self.nome.data,
             email=self.email.data,
             telefone=self.telefone.data,
-            skype=self.skype.data
+            skype=self.skype.data,
+            foto=nome_seguro
         )
-        # 🔥 AGORA USA O MÉTODO set_senha COM BCRYPT (igual material de estudo)
+        
+        
+        # AGORA USA O MÉTODO set_senha COM BCRYPT 
         usuario.set_senha(self.senha.data)
         
         db.session.add(usuario)

@@ -64,12 +64,13 @@
             {% if current_user.is_authenticated %}
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3 text-white">
-                    {{ current_user.nome }}
+                    {{ current_user.nome }}  <img src="{{url_for('static', filename='data/img_user/{}'.format(current_user.foto))}}" width="40px" height="35px"
+                                    class="rounded-circle">
                 </span>
-                <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">
+            </div>
+            <a class="btn btn-outline-light" href="{{ url_for('logout') }}">
                     Sair
                 </a>
-            </div>
             {% endif %}
         </div>
     </nav>

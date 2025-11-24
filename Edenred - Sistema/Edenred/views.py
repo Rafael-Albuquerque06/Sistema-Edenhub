@@ -13,14 +13,14 @@ def login():
         login_info = form.usuario_login.data
         senha = form.senha.data
         
-        # Buscar usuário por email, telefone ou Skype - MESMA LÓGICA DO MATERIAL
+        # Buscar usuário por email, telefone ou Skype
         usuario = Usuario.query.filter(
             (Usuario.email == login_info) | 
             (Usuario.telefone == login_info) | 
             (Usuario.skype == login_info)
         ).first()
         
-        # 🔥 VERIFICAÇÃO COM BCRYrypt (igual material de estudo)
+        # VERIFICAÇÃO DE SENHA COM BCRrypt
         if usuario and usuario.check_senha(senha):
             login_user(usuario)
             flash('Login realizado com sucesso!', 'success')
@@ -36,7 +36,7 @@ def cadastro():
     
     if form.validate_on_submit():
         try:
-            # 🔥 AGORA USA O save() QUE USA BCRYPT (igual material de estudo)
+            # AGORA USA O save() QUE USA BCRYPT (igual material de estudo)
             usuario = form.save()
             
             flash('Cadastro realizado com sucesso! Faça login para continuar.', 'success')

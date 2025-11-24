@@ -9,8 +9,13 @@
 
                 <p class="text-center">( * ) Dado obrigatório.</p>
                 
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {{ form.csrf_token }}
+
+                    <div class="mb-3">
+                        {{ form.foto.label(class="form-label text-dark") }}
+                        {{ form.foto(class="form-control", placeholder="Sua foto aqui (opcional)") }}
+                    </div>
                     
                     <div class="mb-3">
                         {{ form.nome.label(class="form-label text-dark") }}
