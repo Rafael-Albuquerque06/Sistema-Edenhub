@@ -37,7 +37,7 @@ def cadastro():
     if form.validate_on_submit():
         try:
             # AGORA USA O save() para salvar no banco de dados
-            usuario = form.save()
+            form.save()
             
             flash('Cadastro realizado com sucesso! Faça login para continuar.', 'success')
             return redirect(url_for('login'))

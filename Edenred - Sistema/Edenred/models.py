@@ -9,7 +9,7 @@ class Usuario(db.Model, UserMixin):
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     telefone = db.Column(db.String(20), unique=True)
-    skype = db.Column(db.String(100), unique=True)
+    skype = db.Column(db.String(100), unique=True, nullable=True)
     senha_hash = db.Column(db.String(200), nullable=False)
     
     def set_senha(self, senha):

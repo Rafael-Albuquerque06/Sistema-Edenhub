@@ -40,11 +40,10 @@ class CadastroUsuarioForm(FlaskForm):
     
     def validate_skype(self, skype):
         """Valida se o Skype já existe (apenas se preenchido)"""
-        if skype.data:  # Só valida se o campo não estiver vazio
+        if skype.data and skype.data.strip(): 
             usuario = Usuario.query.filter_by(skype=skype.data).first()
             if usuario:
                 raise ValidationError('Este Skype já está cadastrado!')
-    
     
     def save(self):
         #Cria e salva um novo usuário
@@ -66,11 +65,13 @@ class CadastroUsuarioForm(FlaskForm):
             # Salva o arquivo apenas se foi enviado
             foto.save(caminho)
         
+        skype_value = self.skype.data if self.skype.data and self.skype.data.strip() != '' else None
+        
         usuario = Usuario(
             nome=self.nome.data,
             email=self.email.data,
             telefone=self.telefone.data,
-            skype=self.skype.data,
+            skype=skype_value,
             foto=nome_seguro
         )
         
