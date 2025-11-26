@@ -254,4 +254,4 @@ Encontrou problemas?
 
 Acesse `http://localhost:5000` e comece a explorar as funcionalidades. Para qualquer dúvida, consulte a documentação acima ou entre em contato comigo rafaalbuquerque1279@gmail.com.
 
-Developed by Rafael Albuquerque.
+Developed by Rafael Albuquerque for Edenred.
