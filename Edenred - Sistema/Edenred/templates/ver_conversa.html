@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        {% include 'nav.html' %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-edenred">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 text-dark">
+                    Conversa com {{ outro_usuario.nome }}
+                </h5>
+                <a href="{{ url_for('comunicacao') }}" class="btn btn-edenred btn-sm">Voltar</a>
+            </div>
+            
+            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                {% if mensagens %}
+                    {% for mensagem in mensagens %}
+                        <div class="d-flex mb-3 {% if mensagem.remetente_id == current_user.id %}justify-content-end{% endif %}">
+                            <div class="{% if mensagem.remetente_id == current_user.id %}text-end{% endif %}">
+                                <div class="d-flex align-items-center {% if mensagem.remetente_id == current_user.id %}flex-row-reverse{% endif %}">
+                                    <img src="{{ url_for('static', filename='data/img_user/{}'.format(mensagem.remetente.foto)) }}" 
+                                         width="35" height="35" class="rounded-circle mx-2">
+                                    <div>
+                                        <small class="text-muted">
+                                            {{ mensagem.remetente.nome }} - 
+                                            {{ mensagem.data_envio.strftime('%d/%m/%Y %H:%M') }}
+                                        </small>
+                                        <div class="alert {% if mensagem.remetente_id == current_user.id %}alert-primary{% else %}alert-secondary{% endif %} mb-0">
+                                            {{ mensagem.mensagem }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center text-muted">Nenhuma mensagem ainda. Inicie a conversa!</p>
+                {% endif %}
+            </div>
+            
+            <div class="card-footer">
+                <form method="post">
+                    {{ form.csrf_token }}
+                    <div class="input-group">
+                        {{ form.mensagem(class="form-control", placeholder="Digite sua mensagem...", rows="2") }}
+                        {{ form.btnEnviar(class="btn btn-edenred") }}
+                    </div>
+                    {% if form.mensagem.errors %}
+                        <div class="text-danger">
+                            {% for error in form.mensagem.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

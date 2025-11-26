@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, FloatField, TextAreaField, SelectMultipleField, FileField,widgets
 from wtforms.validators import DataRequired, Email, Length, Optional, equal_to,ValidationError
-from Edenred.models import Usuario, Empresa, Indicacao
+from Edenred.models import Usuario, Empresa, Indicacao, Mensagem
 
 from Edenred import db, app, bcrypt
 from wtforms.widgets import ListWidget, CheckboxInput
@@ -185,3 +185,20 @@ class IndicacaoForm(FlaskForm):
         db.session.add(indicacao)
         db.session.commit()
         return indicacao
+    
+    
+class MensagemForm(FlaskForm):
+    mensagem = TextAreaField('Mensagem', validators=[DataRequired(), Length(max=2000)])
+    btnEnviar = SubmitField('Enviar')
+    
+    def save(self, conversa_id, remetente_id):
+        
+        mensagem = Mensagem(
+            conversa_id=conversa_id,
+            remetente_id=remetente_id,
+            mensagem=self.mensagem.data
+        )
+        
+        db.session.add(mensagem)
+        db.session.commit()
+        return mensagem

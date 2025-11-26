@@ -49,7 +49,7 @@ class Indicacao(db.Model):
     bu_indicado = db.Column(db.String(100), nullable=False)
     produtos_escolhidos = db.Column(db.String(500))
     
-    #Depende do BU indicado. Exemplo: para Ticket Log.
+    #Depende do BU indicado. Exemplo: para Ticket Log. (colocar isso na tabela EMPRESA não em indicação por que são dados da empresa.)
     quantidade_caminhoes = db.Column(db.Integer)
     quantidade_funcionarios = db.Column(db.Integer)
     quantidade_veiculos_pesados = db.Column(db.Integer)
@@ -88,3 +88,23 @@ class Indicacao(db.Model):
         
         return produtos_duplicados
 
+
+class Conversa(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    usuario1_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    usuario2_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    data_criacao = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    
+    usuario1 = db.relationship('Usuario', foreign_keys=[usuario1_id], backref=db.backref('conversas_iniciadas', lazy=True))
+    usuario2 = db.relationship('Usuario', foreign_keys=[usuario2_id], backref=db.backref('conversas_recebidas', lazy=True))
+
+class Mensagem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    conversa_id = db.Column(db.Integer, db.ForeignKey('conversa.id'), nullable=False)
+    remetente_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    mensagem = db.Column(db.Text, nullable=False)
+    data_envio = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    lida = db.Column(db.Boolean, default=False)
+    
+    conversa = db.relationship('Conversa', backref=db.backref('mensagens', lazy=True))
+    remetente = db.relationship('Usuario', backref=db.backref('mensagens_enviadas', lazy=True))

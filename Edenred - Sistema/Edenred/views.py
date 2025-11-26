@@ -1,7 +1,7 @@
 from Edenred import app, db
 from flask import render_template, url_for, request, redirect, flash, jsonify
-from Edenred.models import Usuario, Empresa, Indicacao
-from Edenred.forms import LoginForm, CadastroBasicoForm, BUForm, IndicacaoForm, CadastroUsuarioForm
+from Edenred.models import Usuario, Empresa, Indicacao, Mensagem, Conversa
+from Edenred.forms import LoginForm, CadastroBasicoForm, BUForm, IndicacaoForm, CadastroUsuarioForm, MensagemForm
 from flask_login import login_user, logout_user, login_required, current_user
 
 
@@ -36,7 +36,7 @@ def cadastro():
     
     if form.validate_on_submit():
         try:
-            # AGORA USA O save() QUE USA BCRYPT (igual material de estudo)
+            # AGORA USA O save() para salvar no banco de dados
             usuario = form.save()
             
             flash('Cadastro realizado com sucesso! Faça login para continuar.', 'success')
@@ -127,7 +127,7 @@ def crosselling():
         
         if request.method == 'POST':
             if form_basico.validate_on_submit():
-                # 🔥 AGORA É SUPER SIMPLES: apenas chamar .save() no formulário
+                
                 empresa = form_basico.save(cnpj)
                 
                 flash('Cadastro básico salvo com sucesso!', 'success')
@@ -143,7 +143,7 @@ def crosselling():
         empresa = Empresa.query.get(empresa_id)
         
         if request.method == 'POST':
-            # VALIDAÇÃO MANUAL dos produtos (já que removemos DataRequired)
+            # VALIDAÇÃO MANUAL dos produtos
             produtos_selecionados = request.form.getlist('produtos')
             
             # Verifica se todos os campos obrigatórios estão preenchidos
@@ -154,7 +154,7 @@ def crosselling():
                 flash('Por favor, preencha todos os campos obrigatórios.', 'error')
                 return render_template('crosselling.html', etapa='bu', form_bu=form_bu, empresa=empresa)
             
-            # Se chegou aqui, todos os campos estão preenchidos
+            # Se chegou aqui, todos os campos estão preenchidos e é convertido pra string
             produtos_str = ", ".join(produtos_selecionados)
             
             if form_bu.acao.data == 'vender':
@@ -193,7 +193,6 @@ def crosselling():
                     flash('Indicação bloqueada! Produtos já indicados recentemente (ultimos 3 meses).', 'error')
                     return render_template('crosselling.html', etapa='indicacao', form_indicacao=form_indicacao, empresa=empresa, bu=bu, produtos=produtos)
                 
-                # 🔥 AGORA É SUPER SIMPLES: apenas chamar .save() no formulário
                 form_indicacao.save(empresa_id, current_user.id, bu, produtos)
                 
                 flash('Solicitação encaminhada com sucesso! Em breve você será informado do parecer da análise. Obrigado!', 'success')
@@ -242,3 +241,88 @@ def minhas_pendencias():
     
     return render_template('minhas_pendencias.html', indicacoes=indicacoes)
 
+@app.route('/comunicacao')
+@login_required
+def comunicacao():
+    # Buscar todas as conversas do usuário
+    conversas = Conversa.query.filter(
+        (Conversa.usuario1_id == current_user.id) | 
+        (Conversa.usuario2_id == current_user.id)
+    ).all()
+    
+    # Buscar todos os usuários para iniciar nova conversa
+    outros_usuarios = Usuario.query.filter(Usuario.id != current_user.id).all()
+    
+    return render_template('comunicacao.html', 
+                         conversas=conversas, 
+                         outros_usuarios=outros_usuarios)
+
+
+@app.route('/comunicacao/<int:conversa_id>', methods=['GET', 'POST'])
+@login_required
+def ver_conversa(conversa_id):
+    conversa = Conversa.query.get_or_404(conversa_id)
+    
+    # Verificar se o usuário atual faz parte da conversa
+    if current_user.id not in [conversa.usuario1_id, conversa.usuario2_id]:
+        flash('Acesso não autorizado!', 'error')
+        return redirect(url_for('comunicacao'))
+    
+    form = MensagemForm()
+    
+    if form.validate_on_submit():
+        mensagem = form.save(conversa_id, current_user.id)
+        
+        flash('Mensagem enviada!', 'success')
+        return redirect(url_for('ver_conversa', conversa_id=conversa_id))
+    
+    # Buscar todas as mensagens da conversa
+    mensagens = Mensagem.query.filter_by(conversa_id=conversa_id)\
+        .order_by(Mensagem.data_envio.asc())\
+        .all()
+    
+    # Marcar mensagens como lidas
+    for mensagem in mensagens:
+        if mensagem.remetente_id != current_user.id and not mensagem.lida:
+            mensagem.lida = True
+    db.session.commit()
+    
+    # Determinar com quem é a conversa
+    outro_usuario = conversa.usuario2 if conversa.usuario1_id == current_user.id else conversa.usuario1
+    
+    return render_template('ver_conversa.html', 
+                         conversa=conversa,
+                         mensagens=mensagens,
+                         outro_usuario=outro_usuario,
+                         form=form)
+
+@app.route('/comunicacao/nova/<int:usuario_id>')
+@login_required
+def nova_conversa(usuario_id):
+    # Verificar se o usuário existe
+    usuario_destino = Usuario.query.get_or_404(usuario_id)
+    
+    #impedir conversa consigo mesmo
+    if usuario_destino.id == current_user.id:
+        flash('Não é possível iniciar conversa consigo mesmo!', 'error')
+        return redirect(url_for('comunicacao'))
+    
+    # Verificar se já existe conversa entre os usuários
+    conversa_existente = Conversa.query.filter(
+        ((Conversa.usuario1_id == current_user.id) & (Conversa.usuario2_id == usuario_id)) |
+        ((Conversa.usuario1_id == usuario_id) & (Conversa.usuario2_id == current_user.id))
+    ).first()
+    
+    if conversa_existente:
+        return redirect(url_for('ver_conversa', conversa_id=conversa_existente.id))
+    
+    # Criar nova conversa
+    nova_conversa = Conversa(
+        usuario1_id=current_user.id,
+        usuario2_id=usuario_id
+    )
+    
+    db.session.add(nova_conversa)
+    db.session.commit()
+    
+    return redirect(url_for('ver_conversa', conversa_id=nova_conversa.id))

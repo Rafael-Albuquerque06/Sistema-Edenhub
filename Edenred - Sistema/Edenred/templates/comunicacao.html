@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        {% include 'nav.html' %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card card-edenred">
+            <div class="card-header">
+                <h5 class="card-title mb-0 text-dark">Usuários</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for usuario in outros_usuarios %}
+                    <a href="{{ url_for('nova_conversa', usuario_id=usuario.id) }}" 
+                       class="list-group-item list-group-item-action">
+                       <div class="d-flex align-items-center">
+                           <img src="{{ url_for('static', filename='data/img_user/{}'.format(usuario.foto)) }}" 
+                                width="40" height="40" class="rounded-circle me-3">
+                           <div>
+                               <strong class="text-dark">{{ usuario.nome }}</strong>
+                               <br>
+                               <small class="text-muted">{{ usuario.email }}</small>
+                           </div>
+                       </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card card-edenred">
+            <div class="card-header">
+                <h5 class="card-title mb-0 text-dark">Minhas Conversas</h5>
+            </div>
+            <div class="card-body">
+                {% if conversas %}
+                    <div class="list-group">
+                        {% for conversa in conversas %}
+                            {% set outro_usuario = conversa.usuario2 if conversa.usuario1_id == current_user.id else conversa.usuario1 %}
+                            {% set ultima_mensagem = conversa.mensagens|sort(attribute='data_envio')|last if conversa.mensagens else None %}
+                            
+                            <a href="{{ url_for('ver_conversa', conversa_id=conversa.id) }}" 
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('static', filename='data/img_user/{}'.format(outro_usuario.foto)) }}" 
+                                         width="50" height="50" class="rounded-circle me-3">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between">
+                                            <strong class="text-dark">{{ outro_usuario.nome }}</strong>
+                                            {% if ultima_mensagem %}
+                                                <small class="text-muted">
+                                                    {{ ultima_mensagem.data_envio.strftime('%d/%m/%Y %H:%M') }}
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                        {% if ultima_mensagem %}
+                                            <p class="mb-0 text-muted">
+                                                {% if ultima_mensagem.remetente_id == current_user.id %}
+                                                    <strong>Você:</strong>
+                                                {% endif %}
+                                                {{ ultima_mensagem.mensagem[:50] }}{% if ultima_mensagem.mensagem|length > 50 %}...{% endif %}
+                                            </p>
+                                        {% else %}
+                                            <p class="mb-0 text-muted">Nenhuma mensagem ainda</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">Nenhuma conversa iniciada. Comece uma nova conversa!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
