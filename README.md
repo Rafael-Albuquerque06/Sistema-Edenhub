@@ -18,10 +18,9 @@ Sistema completo para gestão de cross-selling e comunicação interna, desenvol
 - **Mensagens em tempo real**
 
 ### 📊 Gestão de Dados
-- **Consulta de clientes** com filtros avançados
+- **Consulta de clientes** com filtros
 - **Dashboard de pendências**
 - **Portfólio de produtos** organizado
-- **Relatórios estruturados** para análise
 
 ## 🛠️ Tecnologias Utilizadas
 
