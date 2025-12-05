@@ -120,7 +120,8 @@ class CadastroBasicoForm(FlaskForm):
                 cargo_contato=self.cargo_contato.data,
                 departamento_contato=self.departamento_contato.data,
                 celular_contato=self.celular_contato.data,
-                eh_cliente=False
+                eh_cliente=False,
+                responsavel_id=None 
             )
             
             db.session.add(empresa)

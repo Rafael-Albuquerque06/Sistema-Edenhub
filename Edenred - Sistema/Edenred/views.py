@@ -119,7 +119,17 @@ def crosselling():
         
         # Buscar empresa para mostrar na tela (quando não há ação ainda)
         empresa = Empresa.query.filter_by(cnpj=cnpj).first()
-        return render_template('crosselling.html', etapa='decisao', cnpj=cnpj, empresa=empresa)
+        
+        responsavel_info = None
+        if empresa and empresa.eh_cliente and empresa.responsavel:
+            responsavel_info = {
+                'nome': empresa.responsavel.nome,
+                'email': empresa.responsavel.email,
+                'telefone': empresa.responsavel.telefone,
+                'foto': empresa.responsavel.foto
+            }
+            
+        return render_template('crosselling.html', etapa='decisao', cnpj=cnpj, empresa=empresa, responsavel=responsavel_info)
     
     elif etapa == 'cadastro':
         form_basico = CadastroBasicoForm()
@@ -160,6 +170,9 @@ def crosselling():
             if form_bu.acao.data == 'vender':
                 # Marcar empresa como cliente e adicionar BU
                 empresa.eh_cliente = True
+                
+                empresa.responsavel_id = current_user.id
+                
                 if empresa.bus_contratados:
                     empresa.bus_contratados += f", {form_bu.bu_escolhido.data}"
                 else:
@@ -214,7 +227,8 @@ def consulta_clientes():
             query = query.filter(
                 (Empresa.razao_social.contains(pesquisa)) |
                 (Empresa.cnpj.contains(pesquisa)) |
-                (Empresa.municipio.contains(pesquisa))
+                (Empresa.municipio.contains(pesquisa)) |
+                (Empresa.responsavel.has(Usuario.nome.contains(pesquisa)))
             )
         
     clientes = query.order_by(Empresa.razao_social).all()

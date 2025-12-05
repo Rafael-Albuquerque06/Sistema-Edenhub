@@ -18,9 +18,9 @@
                 <form method="post" class="mt-4">
                     <div class="mb-3">
                         <label for="cnpj" class="form-label text-dark"><strong>CNPJ*</strong></label>
-                        <input type="text" class="form-control" id="cnpj" name="cnpj"
-                            placeholder="CNPJ" pattern="[0-9]{14}"
-                            title="Digite exatamente 14 números" style="font-size: 16px; padding: 12px;">
+                        <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ"
+                            pattern="[0-9]{14}" title="Digite exatamente 14 números"
+                            style="font-size: 16px; padding: 12px;">
                         <div class="form-text text-muted">
                             <strong>Qualquer CNPJ com 14 dígitos</strong>
                         </div>
@@ -48,6 +48,36 @@
                 <div class="alert alert-info">
                     <strong>Empresa encontrada:</strong> {{ empresa.razao_social }}
                 </div>
+
+                {% if empresa.eh_cliente and responsavel %}
+                <div class="alert alert-success mt-3">
+                    <h5>👤 Responsável pelo Cliente:</h5>
+                    <div class="d-flex align-items-center justify-content-center mt-2">
+                        <img src="{{ url_for('static', filename='data/img_user/{}'.format(responsavel.foto)) }}"
+                            width="50" height="50" class="rounded-circle me-3">
+                        <div class="text-start">
+                            <strong class="text-dark">{{ responsavel.nome }}</strong><br>
+                            <small class="text-muted">📧 {{ responsavel.email }}</small><br>
+                            <small class="text-muted">📞 {{ responsavel.telefone }}</small>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{{ url_for('nova_conversa', usuario_id=empresa.responsavel_id) }}"
+                            class="btn btn-sm btn-outline-primary">
+                            💬 Enviar mensagem
+                        </a>
+                        <a href="mailto:{{ responsavel.email }}" class="btn btn-sm btn-outline-secondary ms-2">
+                            📩 Enviar email
+                        </a>
+                    </div>
+                </div>
+                {% elif empresa.eh_cliente %}
+                <div class="alert alert-warning mt-3">
+                    <small>⚠️ Este cliente não possui um responsável atribuído.</small>
+                </div>
+                {% endif %}
+                <!-- FIM DA NOVA SEÇÃO -->
+
                 {% else %}
                 <div class="alert alert-warning">
                     <strong>Nova empresa:</strong> Será criado um novo cadastro

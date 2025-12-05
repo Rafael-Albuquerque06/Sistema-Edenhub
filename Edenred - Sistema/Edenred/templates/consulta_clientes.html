@@ -9,65 +9,394 @@
 
 <div class="row">
     <div class="col-12">
-        <h1 class="text-center mb-4 text-dark">Consulta de Clientes</h1>
-        
-        <form method="get" class="row mb-4">
-            <div class="col-md-9">
-                <input type="text" name="pesquisa" class="form-control" 
-                       placeholder="Pesquisar por razão social, CNPJ ou município..." 
-                       value="{{ pesquisa }}">
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 fw-bold text-dark mb-1">
+                    <i class="bi bi-people-fill text-edenred me-2"></i>
+                    Consulta de Clientes
+                </h1>
+                <p class="text-muted mb-0">Busque e gerencie clientes da base Edenred</p>
             </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-edenred w-100">Pesquisar</button>
-            </div>
-        </form>
+            
+        </div>
 
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-edenred">
-                    <tr>
-                        <th>CNPJ</th>
-                        <th>Razão Social</th>
-                        <th>Município/UF</th>
-                        <th>BU's Contratados</th>
-                        <th>Indicações Pendentes</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cliente in clientes %}
-                    <tr>
-                        <td class="text-dark">{{ cliente.cnpj }}</td>
-                        <td class="text-dark">{{ cliente.razao_social }}</td>
-                        <td class="text-dark">{{ cliente.municipio }}/{{ cliente.estado }}</td>
-                        <td>
-                            {% for bu in cliente.bus_list %}
-                                <span class="badge bg-edenred">{{ bu }}</span>
-                            {% endfor %}
-                        </td>
-                        <td>
-                            {% if cliente.indicacoes_pendentes > 0 %}
-                                <span class="badge bg-warning text-dark">{{ cliente.indicacoes_pendentes }} pendente(s)</span>
-                            {% else %}
-                                <span class="badge bg-success">Nenhuma</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if cliente.eh_cliente %}
-                                <span class="badge bg-success">Cliente Ativo</span>
-                            {% else %}
-                                <span class="badge bg-secondary">Não Cliente</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center text-dark">Nenhum cliente encontrado</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- BARRA DE PESQUISA -->
+        <div class="card card-edenred mb-4">
+            <div class="card-body p-3">
+                <form method="get" class="row g-2">
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" name="pesquisa" class="form-control"
+                                placeholder="Buscar por CNPJ, razão social, município..." value="{{ pesquisa }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-edenred w-100">
+                            <i class="bi bi-search me-1"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TABELA COM COLUNA SEPARADA PARA CONTATO -->
+        <div class="card card-edenred">
+            <div class="card-header-edenred bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-table text-edenred me-2"></i>
+                    Clientes Cadastrados
+                </h5>
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    {{ clientes|length }} registro(s)
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark" style="background: linear-gradient(135deg, #8B0000, #A52A2A);">
+                        <tr>
+                            <th class="text-white ps-4" width="15%">CNPJ</th>
+                            <th class="text-white" width="20%">Razão Social</th>
+                            <th class="text-white" width="20%">Contato da Empresa</th> <!-- NOVA COLUNA -->
+                            <th class="text-white" width="15%">Local</th>
+                            <th class="text-white" width="15%">Responsável</th>
+                            <th class="text-white" width="10%">BU's</th>
+                            <th class="text-white pe-4 text-center" width="5%">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                        <tr class="border-bottom">
+                            <!-- CNPJ -->
+                            <td class="ps-4 py-3">
+                                <div class="fw-bold text-dark">
+                                    {{ cliente.cnpj[:2] }}.{{ cliente.cnpj[2:5] }}.{{ cliente.cnpj[5:8] }}/{{
+                                    cliente.cnpj[8:12] }}-{{ cliente.cnpj[12:] }}
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    {{ cliente.data_cadastro.strftime('%d/%m/%Y') if cliente.data_cadastro }}
+                                </small>
+                            </td>
+
+                            <!-- RAZÃO SOCIAL (APENAS NOME) -->
+                            <td class="py-3">
+                                <strong class="text-dark d-block mb-1">
+                                    <i class="bi bi-building text-edenred me-2"></i>
+                                    {{ cliente.razao_social }}
+                                </strong>
+                                <small class="text-muted">
+                                    {% if cliente.bairro %}
+                                    <i class="bi bi-geo-alt me-1"></i> {{ cliente.bairro }}
+                                    {% endif %}
+                                </small>
+                            </td>
+
+                            <!-- CONTATO DA EMPRESA - NOVA COLUNA -->
+                            <td class="py-3">
+                                {% if cliente.nome_contato or cliente.telefone_contato %}
+                                <div class="border-start border-3 border-info ps-3">
+                                    <!-- NOME E CARGO -->
+                                    {% if cliente.nome_contato %}
+                                    <div class="mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person-badge text-info me-2"></i>
+                                            <div>
+                                                <strong class="text-dark d-block">{{ cliente.nome_contato }}</strong>
+                                                {% if cliente.cargo_contato %}
+                                                <small class="text-muted">{{ cliente.cargo_contato }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- TELEFONES -->
+                                    <div class="mb-2">
+                                        {% if cliente.telefone_contato %}
+                                        <div class="d-flex align-items-center mb-1">
+                                            <i class="bi bi-telephone text-muted me-2"></i>
+                                            <span class="text-dark">{{ cliente.telefone_contato }}</span>
+                                            <a href="tel:{{ cliente.telefone_contato|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
+                                                class="btn btn-sm btn-outline-success btn-sm ms-2"
+                                                data-bs-toggle="tooltip" title="Ligar">
+                                                <i class="bi bi-telephone-outbound"></i>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if cliente.celular_contato %}
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-phone text-muted me-2"></i>
+                                            <span class="text-dark">{{ cliente.celular_contato }}</span>
+                                            <a href="tel:{{ cliente.celular_contato|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
+                                                class="btn btn-sm btn-outline-success btn-sm ms-2"
+                                                data-bs-toggle="tooltip" title="Ligar">
+                                                <i class="bi bi-telephone-outbound"></i>
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- EMAIL -->
+                                    {% if cliente.email_contato %}
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-envelope text-muted me-2"></i>
+                                        <small class="text-dark">{{ cliente.email_contato }}</small>
+                                        <a href="mailto:{{ cliente.email_contato }}"
+                                            class="btn btn-sm btn-outline-primary btn-sm ms-2" data-bs-toggle="tooltip"
+                                            title="Enviar email">
+                                            <i class="bi bi-envelope-arrow-up"></i>
+                                        </a>
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- DEPARTAMENTO -->
+                                    {% if cliente.departamento_contato %}
+                                    <div class="mt-2">
+                                        <span class="badge bg-info bg-opacity-10 text-info border border-info">
+                                            {{ cliente.departamento_contato }}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                <div class="text-center text-muted py-2">
+                                    <i class="bi bi-person-x d-block mb-1"></i>
+                                    <small>Sem contato cadastrado</small>
+                                </div>
+                                {% endif %}
+                            </td>
+
+                            <!-- LOCALIZAÇÃO -->
+                            <td class="py-3">
+                                <div class="text-dark fw-medium">{{ cliente.municipio }}</div>
+                                <div class="text-muted small">
+                                    <span class="badge bg-light text-dark border">{{ cliente.estado }}</span>
+                                    {% if cliente.cep %}
+                                    <div class="mt-1">
+                                        <i class="bi bi-mailbox me-1"></i>{{ cliente.cep[:5] }}-{{ cliente.cep[5:] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- RESPONSÁVEL EDENRED -->
+                            <td class="py-3">
+                                {% if cliente.responsavel %}
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('static', filename='data/img_user/{}'.format(cliente.responsavel.foto)) }}"
+                                        class="rounded-circle me-3" width="45" height="45">
+                                    <div>
+                                        <strong class="text-dark d-block">{{ cliente.responsavel.nome }}</strong>
+                                        <div class="text-muted small">
+                                            <i class="bi bi-envelope me-1"></i> {{ cliente.responsavel.email }}
+                                            <br>
+                                            <i class="bi bi-telephone me-1"></i> {{ cliente.responsavel.telefone }}
+                                        </div>
+                                        <!-- BOTÕES DE CONTATO -->
+                                        <div class="mt-2">
+                                            <a href="{{ url_for('nova_conversa', usuario_id=cliente.responsavel.id) }}"
+                                                class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                                title="Enviar mensagem">
+                                                <i class="bi bi-chat"></i>
+                                            </a>
+                                            <a href="mailto:{{ cliente.responsavel.email }}"
+                                                class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="tooltip"
+                                                title="Enviar email">
+                                                <i class="bi bi-envelope"></i>
+                                            </a>
+                                            <a href="tel:{{ cliente.responsavel.telefone|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
+                                                class="btn btn-sm btn-outline-success" data-bs-toggle="tooltip"
+                                                title="Ligar para {{ cliente.responsavel.telefone }}">
+                                                <i class="bi bi-telephone-outbound"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="text-center py-2">
+                                    <i class="bi bi-person-x text-muted d-block mb-2"></i>
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-exclamation-triangle me-1"></i> Sem responsável
+                                    </span>
+                                </div>
+                                {% endif %}
+                            </td>
+
+                            <!-- BU's CONTRATADOS -->
+                            <td class="py-3">
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for bu in cliente.bus_list %}
+                                    {% set bu_icons = {
+                                    'Ticket Log': 'bi-truck',
+                                    'Edenred Pay': 'bi-credit-card',
+                                    'Ticket Serviços': 'bi-gift',
+                                    'Combo': 'bi-layers',
+                                    'Golntegro': 'bi-airplane',
+                                    'Punto': 'bi-geo-alt',
+                                    'Repom': 'bi-fuel-pump'
+                                    } %}
+
+                                    <span class="badge bg-danger text-white px-3 py-2 d-flex align-items-center">
+                                        <i class="bi {{ bu_icons.get(bu, 'bi-briefcase') }} me-2"></i>
+                                        {{ bu }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted fst-italic">Nenhum BU contratado</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+
+                            <!-- STATUS -->
+                            <td class="py-3 pe-4 text-center">
+                                <div class="d-flex flex-column gap-1">
+                                    {% if cliente.eh_cliente %}
+                                    <span class="badge bg-success py-2">
+                                        <i class="bi bi-check-circle me-1"></i> Ativo
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-secondary py-2">
+                                        <i class="bi bi-dash-circle me-1"></i> Não Cliente
+                                    </span>
+                                    {% endif %}
+
+                                    {% if cliente.indicacoes_pendentes > 0 %}
+                                    <span class="badge bg-warning text-dark py-2" data-bs-toggle="tooltip"
+                                        title="{{ cliente.indicacoes_pendentes }} pendência(s)">
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        {{ cliente.indicacoes_pendentes }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                                <h5 class="text-dark">Nenhum cliente encontrado</h5>
+                                <p class="text-muted">Tente buscar com termos diferentes</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FOOTER DA TABELA -->
+            {% if clientes %}
+            <div class="card-footer bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted">
+                        Total: <strong>{{ clientes|length }}</strong> cliente(s)
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-edenred btn-sm">
+                            <i class="bi bi-download me-1"></i> Exportar
+                        </button>
+                        <button class="btn btn-outline-edenred btn-sm">
+                            <i class="bi bi-printer me-1"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+<!-- ESTILOS ADICIONAIS -->
+<style>
+    /* DESTAQUE PARA A NOVA COLUNA DE CONTATO */
+    .border-start.border-info {
+        border-left-color: #17a2b8 !important;
+    }
+
+    /* ESPAÇAMENTO ADEQUADO */
+    .py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    /* BOTÕES COMPACTOS */
+    .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.75rem;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 1200px) {
+
+        .table th,
+        .table td {
+            padding: 0.75rem 0.5rem;
+        }
+
+        .btn-sm i {
+            margin-right: 0 !important;
+        }
+
+        .btn-sm .bi-telephone-outbound,
+        .btn-sm .bi-envelope-arrow-up {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+        }
+
+        .border-start {
+            border-left: none !important;
+            padding-left: 0 !important;
+        }
+    }
+
+    /* CONTRASTE MELHORADO */
+    .text-dark {
+        color: #2c3e50 !important;
+        font-weight: 500;
+    }
+
+    .text-muted {
+        color: #7f8c8d !important;
+    }
+
+    /* HOVER EFFECT */
+    tbody tr:hover {
+        background-color: #fff5f5 !important;
+    }
+
+    /* AJUSTE PARA BADGES BOOTSTRAP */
+    .bg-danger {
+        background-color: #8B0000 !important;
+        border-color: #5A0000 !important;
+    }
+
+    .bg-danger:hover {
+        background-color: #B22222 !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Ativar tooltips
+        var tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltips.map(function (tooltip) {
+            return new bootstrap.Tooltip(tooltip);
+        });
+    });
+</script>
 {% endblock %}

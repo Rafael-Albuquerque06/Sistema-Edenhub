@@ -14,6 +14,30 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['UPLOAD_FILES'] = r'static/data'
 
+import pytz
+from datetime import datetime, timezone
+
+@app.template_filter('formatar_data_brasil')
+def formatar_data_brasil(dt):
+    """Converte UTC para horário de Brasília e formata"""
+    if not dt:
+        return ""
+    
+    try:
+        # Se não tem timezone, assume que é UTC
+        if dt.tzinfo is None:
+            dt = pytz.utc.localize(dt)
+        
+        # Converter para São Paulo (Brasília)
+        tz_brasil = pytz.timezone('America/Sao_Paulo')
+        dt_brasil = dt.astimezone(tz_brasil)
+        
+        # Formatar
+        return dt_brasil.strftime('%d/%m/%Y %H:%M')
+    except Exception:
+        # Fallback: formata sem conversão
+        return dt.strftime('%d/%m/%Y %H:%M')
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)

@@ -38,10 +38,14 @@ class Empresa(db.Model):
     departamento_contato = db.Column(db.String(100))
     celular_contato = db.Column(db.String(20))
     
+    responsavel_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)  # NOVO 
+    
     eh_cliente = db.Column(db.Boolean, default=False)
     bus_contratados = db.Column(db.String(500)) 
     data_cadastro = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-
+    
+    responsavel = db.relationship('Usuario', backref=db.backref('empresas_responsavel', lazy=True))
+    
 class Indicacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'), nullable=False)

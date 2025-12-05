@@ -9,57 +9,142 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="card card-edenred">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0 text-dark">
-                    Conversa com {{ outro_usuario.nome }}
-                </h5>
-                <a href="{{ url_for('comunicacao') }}" class="btn btn-edenred btn-sm">Voltar</a>
+        <!-- HEADER DA CONVERSA -->
+        <div class="card card-edenred mb-4">
+            <div class="card-header-edenred d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <a href="{{ url_for('comunicacao') }}" class="btn btn-outline-edenred btn-sm me-3">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <img src="{{ url_for('static', filename='data/img_user/{}'.format(outro_usuario.foto)) }}" 
+                         class="avatar me-3">
+                    <div>
+                        <h5 class="card-title mb-0 text-dark">
+                            
+                            Conversa com {{ outro_usuario.nome }}
+                        </h5>
+                        <small class="text-muted">
+                            {% if outro_usuario.skype %}
+                            <i class="bi bi-skype me-1"></i> {{ outro_usuario.skype }}
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-edenred btn-sm dropdown-toggle" type="button" 
+                            data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-person me-2"></i> Ver perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="mailto:{{ outro_usuario.email }}">
+                                <i class="bi bi-envelope me-2"></i> Enviar email
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#">
+                                <i class="bi bi-trash me-2"></i> Limpar conversa
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             
-            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+            <!-- ÁREA DE MENSAGENS -->
+            <div class="card-body p-4" style="max-height: 500px; overflow-y: auto; background: #fafafa;">
                 {% if mensagens %}
                     {% for mensagem in mensagens %}
-                        <div class="d-flex mb-3 {% if mensagem.remetente_id == current_user.id %}justify-content-end{% endif %}">
-                            <div class="{% if mensagem.remetente_id == current_user.id %}text-end{% endif %}">
-                                <div class="d-flex align-items-center {% if mensagem.remetente_id == current_user.id %}flex-row-reverse{% endif %}">
-                                    <img src="{{ url_for('static', filename='data/img_user/{}'.format(mensagem.remetente.foto)) }}" 
-                                         width="35" height="35" class="rounded-circle mx-2">
-                                    <div>
-                                        <small class="text-muted">
-                                            {{ mensagem.remetente.nome }} - 
-                                            {{ mensagem.data_envio.strftime('%d/%m/%Y %H:%M') }}
-                                        </small>
-                                        <div class="alert {% if mensagem.remetente_id == current_user.id %}alert-primary{% else %}alert-secondary{% endif %} mb-0">
-                                            {{ mensagem.mensagem }}
-                                        </div>
-                                    </div>
+                    <div class="mb-3 {% if mensagem.remetente_id == current_user.id %}text-end{% endif %}">
+                        <div class="d-flex {% if mensagem.remetente_id == current_user.id %}justify-content-end{% endif %}">
+                            {% if mensagem.remetente_id != current_user.id %}
+                            <img src="{{ url_for('static', filename='data/img_user/{}'.format(mensagem.remetente.foto)) }}" 
+                                 class="avatar me-3 align-self-start">
+                            {% endif %}
+                            
+                            <div class="{% if mensagem.remetente_id == current_user.id %}text-end{% endif %}" 
+                                 style="max-width: 70%;">
+                                <div class="d-flex align-items-center mb-1 {% if mensagem.remetente_id == current_user.id %}justify-content-end{% endif %}">
+                                    <small class="text-muted me-2">
+                                        {{ mensagem.remetente.nome }}
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ mensagem.data_envio|formatar_data_brasil }}
+                                    </small>
+                                </div>
+                                
+                                <div class="message-bubble {% if mensagem.remetente_id == current_user.id %}message-sent{% else %}message-received{% endif %}">
+                                    {{ mensagem.mensagem }}
                                 </div>
                             </div>
+                            
+                            {% if mensagem.remetente_id == current_user.id %}
+                            <img src="{{ url_for('static', filename='data/img_user/{}'.format(current_user.foto)) }}" 
+                                 class="avatar ms-3 align-self-start">
+                            {% endif %}
                         </div>
+                    </div>
                     {% endfor %}
                 {% else %}
-                    <p class="text-center text-muted">Nenhuma mensagem ainda. Inicie a conversa!</p>
+                <!-- ESTADO VAZIO -->
+                <div class="text-center py-5">
+                    <i class="bi bi-chat-text display-1 text-muted mb-3"></i>
+                    <h5 class="text-dark">Nenhuma mensagem ainda</h5>
+                    <p class="text-muted">Inicie a conversa enviando sua primeira mensagem!</p>
+                </div>
                 {% endif %}
             </div>
             
-            <div class="card-footer">
-                <form method="post">
+            <!-- FORMULÁRIO DE MENSAGEM -->
+            <div class="card-footer bg-white border-top">
+                <form method="post" class="message-form">
                     {{ form.csrf_token }}
                     <div class="input-group">
-                        {{ form.mensagem(class="form-control", placeholder="Digite sua mensagem...", rows="2") }}
-                        {{ form.btnEnviar(class="btn btn-edenred") }}
+                        {{ form.mensagem(class="form-control form-control-custom", 
+                                        placeholder="Digite sua mensagem...", 
+                                        rows="2",
+                                        style="resize: none;") }}
+                        <button type="submit" class="btn btn-edenred">
+                            <i class="bi bi-send"></i>
+                        </button>
                     </div>
                     {% if form.mensagem.errors %}
-                        <div class="text-danger">
-                            {% for error in form.mensagem.errors %}
-                                <small>{{ error }}</small>
-                            {% endfor %}
-                        </div>
+                    <div class="alert alert-danger alert-message mt-2">
+                        {% for error in form.mensagem.errors %}
+                        <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
                     {% endif %}
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .message-form textarea:focus {
+        box-shadow: none !important;
+    }
+    
+    .message-bubble {
+        line-height: 1.5;
+        word-break: break-word;
+    }
+</style>
+
+<script>
+    // Scroll automático para a última mensagem
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesContainer = document.querySelector('.card-body');
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    });
+</script>
 {% endblock %}
