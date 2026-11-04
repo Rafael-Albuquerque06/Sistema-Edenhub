@@ -1,23 +1,27 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block title %}Consulta de Clientes - Edenhub{% endblock %}
 
-<div class="row">
+{% block content %}
+<!-- HEADER -->
+<div class="row mb-4">
     <div class="col-12">
-        <!-- HEADER -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1 class="h2 fw-bold text-dark mb-1">
+                <h2 class="fw-bold text-dark mb-1">
                     <i class="bi bi-people-fill text-edenred me-2"></i>
                     Consulta de Clientes
-                </h1>
+                </h2>
                 <p class="text-muted mb-0">Busque e gerencie clientes da base Edenred</p>
             </div>
-            
         </div>
+    </div>
+</div>
 
-        <!-- BARRA DE PESQUISA -->
-        <div class="card card-edenred mb-4">
+<!-- BARRA DE PESQUISA -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card card-edenred">
             <div class="card-body p-3">
                 <form method="get" class="row g-2">
                     <div class="col-md-10">
@@ -25,7 +29,7 @@
                             <span class="input-group-text bg-white">
                                 <i class="bi bi-search text-muted"></i>
                             </span>
-                            <input type="text" name="pesquisa" class="form-control"
+                            <input type="text" name="pesquisa" class="form-control form-control-custom"
                                 placeholder="Buscar por CNPJ, razão social, município..." value="{{ pesquisa }}">
                         </div>
                     </div>
@@ -37,10 +41,14 @@
                 </form>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- TABELA COM COLUNA SEPARADA PARA CONTATO -->
+<!-- TABELA DE CLIENTES -->
+<div class="row">
+    <div class="col-12">
         <div class="card card-edenred">
-            <div class="card-header-edenred bg-white d-flex justify-content-between align-items-center py-3">
+            <div class="card-header-edenred d-flex justify-content-between align-items-center py-3">
                 <h5 class="card-title mb-0">
                     <i class="bi bi-table text-edenred me-2"></i>
                     Clientes Cadastrados
@@ -52,26 +60,25 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark table-edenred">
+                <table class="table table-hover align-middle mb-0 table-edenred">
+                    <thead>
                         <tr>
-                            <th class="text-white ps-4">CNPJ</th>
-                            <th class="text-white">Razão Social</th>
-                            <th class="text-white">Contato da Empresa</th>
-                            <th class="text-white">Local</th>
-                            <th class="text-white">Responsável</th>
-                            <th class="text-white">BU's</th>
-                            <th class="text-white pe-4 text-center">Status</th>
+                            <th class="ps-4">CNPJ</th>
+                            <th>Razão Social</th>
+                            <th>Contato da Empresa</th>
+                            <th>Local</th>
+                            <th>Responsável</th>
+                            <th>BU's</th>
+                            <th class="pe-4 text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cliente in clientes %}
-                        <tr class="border-bottom">
+                        <tr>
                             <!-- CNPJ -->
-                            <td class="ps-4 py-3">
+                            <td class="ps-4">
                                 <div class="fw-bold text-dark">
-                                    {{ cliente.cnpj[:2] }}.{{ cliente.cnpj[2:5] }}.{{ cliente.cnpj[5:8] }}/{{
-                                    cliente.cnpj[8:12] }}-{{ cliente.cnpj[12:] }}
+                                    {{ cliente.cnpj[:2] }}.{{ cliente.cnpj[2:5] }}.{{ cliente.cnpj[5:8] }}/{{ cliente.cnpj[8:12] }}-{{ cliente.cnpj[12:] }}
                                 </div>
                                 <small class="text-muted">
                                     <i class="bi bi-calendar3 me-1"></i>
@@ -79,8 +86,8 @@
                                 </small>
                             </td>
 
-                            <!-- RAZÃO SOCIAL (APENAS NOME) -->
-                            <td class="py-3">
+                            <!-- RAZÃO SOCIAL -->
+                            <td>
                                 <strong class="text-dark d-block mb-1">
                                     <i class="bi bi-building text-edenred me-2"></i>
                                     {{ cliente.razao_social }}
@@ -92,11 +99,10 @@
                                 </small>
                             </td>
 
-                            <!-- CONTATO DA EMPRESA - NOVA COLUNA -->
-                            <td class="py-3">
+                            <!-- CONTATO DA EMPRESA -->
+                            <td>
                                 {% if cliente.nome_contato or cliente.telefone_contato %}
                                 <div class="border-start border-3 border-info ps-3">
-                                    <!-- NOME E CARGO -->
                                     {% if cliente.nome_contato %}
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center">
@@ -111,15 +117,14 @@
                                     </div>
                                     {% endif %}
 
-                                    <!-- TELEFONES -->
+                                    {% if cliente.telefone_contato or cliente.celular_contato %}
                                     <div class="mb-2">
                                         {% if cliente.telefone_contato %}
                                         <div class="d-flex align-items-center mb-1">
                                             <i class="bi bi-telephone text-muted me-2"></i>
                                             <span class="text-dark">{{ cliente.telefone_contato }}</span>
                                             <a href="tel:{{ cliente.telefone_contato|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
-                                                class="btn btn-sm btn-outline-success btn-sm ms-2"
-                                                data-bs-toggle="tooltip" title="Ligar">
+                                               class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Ligar">
                                                 <i class="bi bi-telephone-outbound"></i>
                                             </a>
                                         </div>
@@ -130,33 +135,28 @@
                                             <i class="bi bi-phone text-muted me-2"></i>
                                             <span class="text-dark">{{ cliente.celular_contato }}</span>
                                             <a href="tel:{{ cliente.celular_contato|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
-                                                class="btn btn-sm btn-outline-success btn-sm ms-2"
-                                                data-bs-toggle="tooltip" title="Ligar">
+                                               class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Ligar">
                                                 <i class="bi bi-telephone-outbound"></i>
                                             </a>
                                         </div>
                                         {% endif %}
                                     </div>
+                                    {% endif %}
 
-                                    <!-- EMAIL -->
                                     {% if cliente.email_contato %}
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-envelope text-muted me-2"></i>
                                         <small class="text-dark">{{ cliente.email_contato }}</small>
                                         <a href="mailto:{{ cliente.email_contato }}"
-                                            class="btn btn-sm btn-outline-primary btn-sm ms-2" data-bs-toggle="tooltip"
-                                            title="Enviar email">
+                                           class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Enviar email">
                                             <i class="bi bi-envelope-arrow-up"></i>
                                         </a>
                                     </div>
                                     {% endif %}
 
-                                    <!-- DEPARTAMENTO -->
                                     {% if cliente.departamento_contato %}
                                     <div class="mt-2">
-                                        <span class="badge bg-info bg-opacity-10 text-info border border-info">
-                                            {{ cliente.departamento_contato }}
-                                        </span>
+                                        <span class="badge bg-light text-dark border">{{ cliente.departamento_contato }}</span>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -169,7 +169,7 @@
                             </td>
 
                             <!-- LOCALIZAÇÃO -->
-                            <td class="py-3">
+                            <td>
                                 <div class="text-dark fw-medium">{{ cliente.municipio }}</div>
                                 <div class="text-muted small">
                                     <span class="badge bg-light text-dark border">{{ cliente.estado }}</span>
@@ -182,7 +182,7 @@
                             </td>
 
                             <!-- RESPONSÁVEL EDENRED -->
-                            <td class="py-3">
+                            <td>
                                 {% if cliente.responsavel %}
                                 <div class="d-flex align-items-center">
                                     <img src="{{ url_for('static', filename='data/img_user/' ~ cliente.responsavel.foto) }}"
@@ -194,21 +194,17 @@
                                             <br>
                                             <i class="bi bi-telephone me-1"></i> {{ cliente.responsavel.telefone }}
                                         </div>
-                                        <!-- BOTÕES DE CONTATO -->
                                         <div class="mt-2">
                                             <a href="{{ url_for('main.nova_conversa', usuario_id=cliente.responsavel.id) }}"
-                                                class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
-                                                title="Enviar mensagem">
+                                               class="btn btn-sm btn-outline-edenred me-1" data-bs-toggle="tooltip" title="Enviar mensagem">
                                                 <i class="bi bi-chat"></i>
                                             </a>
                                             <a href="mailto:{{ cliente.responsavel.email }}"
-                                                class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="tooltip"
-                                                title="Enviar email">
+                                               class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="tooltip" title="Enviar email">
                                                 <i class="bi bi-envelope"></i>
                                             </a>
                                             <a href="tel:{{ cliente.responsavel.telefone|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
-                                                class="btn btn-sm btn-outline-success" data-bs-toggle="tooltip"
-                                                title="Ligar para {{ cliente.responsavel.telefone }}">
+                                               class="btn btn-sm btn-outline-edenred" data-bs-toggle="tooltip" title="Ligar para {{ cliente.responsavel.telefone }}">
                                                 <i class="bi bi-telephone-outbound"></i>
                                             </a>
                                         </div>
@@ -225,7 +221,7 @@
                             </td>
 
                             <!-- BU's CONTRATADOS -->
-                            <td class="py-3">
+                            <td>
                                 <div class="d-flex flex-wrap gap-2">
                                     {% for bu in cliente.bus_list %}
                                     {% set bu_icons = {
@@ -249,9 +245,9 @@
                             </td>
 
                             <!-- STATUS -->
-                            <td class="py-3 pe-4 text-center">
+                            <td class="pe-4 text-center">
                                 <div class="d-flex flex-column gap-1">
-                                    {% if cliente.eh_cliente %}
+                                    {% if cliente.is_client %}
                                     <span class="badge bg-success py-2">
                                         <i class="bi bi-check-circle me-1"></i> Ativo
                                     </span>
@@ -306,88 +302,8 @@
     </div>
 </div>
 
-<!-- ESTILOS ADICIONAIS -->
-<style>
-    /* DESTAQUE PARA A NOVA COLUNA DE CONTATO */
-    .border-start.border-info {
-        border-left-color: #17a2b8 !important;
-    }
-
-    /* ESPAÇAMENTO ADEQUADO */
-    .py-3 {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
-    }
-
-    /* BOTÕES COMPACTOS */
-    .btn-sm {
-        padding: 0.2rem 0.4rem;
-        font-size: 0.75rem;
-    }
-
-    /* RESPONSIVIDADE */
-    @media (max-width: 1200px) {
-
-        .table th,
-        .table td {
-            padding: 0.75rem 0.5rem;
-        }
-
-        .btn-sm i {
-            margin-right: 0 !important;
-        }
-
-        .btn-sm .bi-telephone-outbound,
-        .btn-sm .bi-envelope-arrow-up {
-            font-size: 0.9rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .table-responsive {
-            font-size: 0.9rem;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            padding: 0.2rem 0.4rem;
-        }
-
-        .border-start {
-            border-left: none !important;
-            padding-left: 0 !important;
-        }
-    }
-
-    /* CONTRASTE MELHORADO */
-    .text-dark {
-        color: #2c3e50 !important;
-        font-weight: 500;
-    }
-
-    .text-muted {
-        color: #7f8c8d !important;
-    }
-
-    /* HOVER EFFECT */
-    tbody tr:hover {
-        background-color: #fff5f5 !important;
-    }
-
-    /* AJUSTE PARA BADGES BOOTSTRAP */
-    .bg-danger {
-        background-color: #8B0000 !important;
-        border-color: #5A0000 !important;
-    }
-
-    .bg-danger:hover {
-        background-color: #B22222 !important;
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Ativar tooltips
         var tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltips.map(function (tooltip) {
             return new bootstrap.Tooltip(tooltip);
