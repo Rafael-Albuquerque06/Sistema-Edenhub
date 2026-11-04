@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.env
+.venv
+
+# Flask / instance
+instance/
+instance/*.db
+*.sqlite
+*.sqlite3
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Graphify outputs (do not commit)
+graphify-out/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg

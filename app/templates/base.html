@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Edenhub - Sistema de Cross-Selling{% endblock %}</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS customizado (design system extraído) -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <!-- NAVBAR (única, definida aqui) -->
+    <nav class="navbar navbar-expand-lg navbar-edenred">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.home') }}">
+                <i class="bi bi-building-gear"></i>
+                <span>Edenhub</span>
+            </a>
+
+            {% if current_user.is_authenticated %}
+            <div class="d-flex align-items-center">
+                <div class="me-3 text-white">
+                    <small class="d-block opacity-75">Bem vindo</small>
+                    <strong>{{ current_user.nome.split(' ')[0] }}</strong>
+                </div>
+                <img src="{{ url_for('static', filename='data/img_user/' ~ current_user.foto) }}"
+                    class="avatar me-3"
+                    alt="Foto de {{ current_user.nome }}">
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.logout') }}">
+                    <i class="bi bi-box-arrow-right"></i> Sair
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- MENU DE NAVEGAÇÃO (único, definido aqui) -->
+    <nav class="nav-menu">
+        <div class="container-fluid justify-content-center">
+            <div class="navbar-nav">
+                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.home' %}active{% endif %}"
+                   href="{{ url_for('main.home') }}">
+                    <i class="bi bi-house-door"></i> Home
+                </a>
+                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.portfolio' %}active{% endif %}"
+                   href="{{ url_for('main.portfolio') }}">
+                    <i class="bi bi-briefcase"></i> Portfólio
+                </a>
+                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.crosselling' %}active{% endif %}"
+                   href="{{ url_for('main.crosselling') }}">
+                    <i class="bi bi-arrow-left-right"></i> Cross-Selling
+                </a>
+                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.consulta_clientes' %}active{% endif %}"
+                   href="{{ url_for('main.consulta_clientes') }}">
+                    <i class="bi bi-search"></i> Consulta Clientes
+                </a>
+                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.comunicacao' %}active{% endif %}"
+                   href="{{ url_for('main.comunicacao') }}">
+                    <i class="bi bi-chat-dots"></i> Comunicação
+                </a>
+                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.minhas_pendencias' %}active{% endif %}"
+                   href="{{ url_for('main.minhas_pendencias') }}">
+                    <i class="bi bi-clock-history"></i> Minhas Pendências
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTAINER PRINCIPAL -->
+    <div class="container py-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show alert-message">
+            <i class="bi bi-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-c-circle"></i> Edenhub 2026
+                <span class="mx-2">•</span>
+                Versão 2.0
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts customizados -->
+    {% block scripts %}{% endblock %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(function (el) { new bootstrap.Tooltip(el); });
+            var popovers = document.querySelectorAll('[data-bs-toggle="popover"]');
+            popovers.forEach(function (el) { new bootstrap.Popover(el); });
+        });
+    </script>
+</body>
+</html>
