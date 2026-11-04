@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  edenhub:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - DATABASE_URI=sqlite:////app/instance/edenred.db
+      - FLASK_APP=main.py
+      - FLASK_ENV=production
+    volumes:
+      - ./instance:/app/instance
+    restart: unless-stopped

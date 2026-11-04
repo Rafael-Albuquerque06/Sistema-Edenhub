@@ -26,3 +26,4 @@ typing_extensions==4.15.0
 Werkzeug==2.3.7
 WTForms==3.0.1
 pytz==2025.2
+pytest==7.4.3

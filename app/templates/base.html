@@ -20,6 +20,9 @@
     {% block head_extra %}{% endblock %}
 </head>
 <body>
+    <!-- Skip link para acessibilidade -->
+    <a href="#content" class="skip-link">Pular para o conteúdo principal</a>
+
     <!-- NAVBAR (única, definida aqui) -->
     <nav class="navbar navbar-expand-lg navbar-edenred">
         <div class="container">
@@ -28,57 +31,75 @@
                 <span>Edenhub</span>
             </a>
 
-            {% if current_user.is_authenticated %}
-            <div class="d-flex align-items-center">
-                <div class="me-3 text-white">
-                    <small class="d-block opacity-75">Bem vindo</small>
-                    <strong>{{ current_user.nome.split(' ')[0] }}</strong>
-                </div>
-                <img src="{{ url_for('static', filename='data/img_user/' ~ current_user.foto) }}"
-                    class="avatar me-3"
-                    alt="Foto de {{ current_user.nome }}">
-                <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.logout') }}">
-                    <i class="bi bi-box-arrow-right"></i> Sair
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </nav>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#edenhubNav"
+                    aria-controls="edenhubNav" aria-expanded="false" aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <!-- MENU DE NAVEGAÇÃO (único, definido aqui) -->
-    <nav class="nav-menu">
-        <div class="container-fluid justify-content-center">
-            <div class="navbar-nav">
-                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.home' %}active{% endif %}"
-                   href="{{ url_for('main.home') }}">
-                    <i class="bi bi-house-door"></i> Home
-                </a>
-                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.portfolio' %}active{% endif %}"
-                   href="{{ url_for('main.portfolio') }}">
-                    <i class="bi bi-briefcase"></i> Portfólio
-                </a>
-                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.crosselling' %}active{% endif %}"
-                   href="{{ url_for('main.crosselling') }}">
-                    <i class="bi bi-arrow-left-right"></i> Cross-Selling
-                </a>
-                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.consulta_clientes' %}active{% endif %}"
-                   href="{{ url_for('main.consulta_clientes') }}">
-                    <i class="bi bi-search"></i> Consulta Clientes
-                </a>
-                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.comunicacao' %}active{% endif %}"
-                   href="{{ url_for('main.comunicacao') }}">
-                    <i class="bi bi-chat-dots"></i> Comunicação
-                </a>
-                <a class="nav-link nav-link-custom {% if request.endpoint == 'main.minhas_pendencias' %}active{% endif %}"
-                   href="{{ url_for('main.minhas_pendencias') }}">
-                    <i class="bi bi-clock-history"></i> Minhas Pendências
-                </a>
+            <div class="collapse navbar-collapse" id="edenhubNav">
+                {% if current_user.is_authenticated %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}"
+                           href="{{ url_for('main.home') }}">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.portfolio' %}active{% endif %}"
+                           href="{{ url_for('main.portfolio') }}">
+                            <i class="bi bi-briefcase me-1"></i> Portfólio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.crosselling' %}active{% endif %}"
+                           href="{{ url_for('main.crosselling') }}">
+                            <i class="bi bi-arrow-left-right me-1"></i> Cross-Selling
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.consulta_clientes' %}active{% endif %}"
+                           href="{{ url_for('main.consulta_clientes') }}">
+                            <i class="bi bi-search me-1"></i> Consulta Clientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.comunicacao' %}active{% endif %}"
+                           href="{{ url_for('main.comunicacao') }}">
+                            <i class="bi bi-chat-dots me-1"></i> Comunicação
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.minhas_pendencias' %}active{% endif %}"
+                           href="{{ url_for('main.minhas_pendencias') }}">
+                            <i class="bi bi-clock-history me-1"></i> Minhas Pendências
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="me-3 text-white">
+                        <small class="d-block opacity-75">Bem vindo</small>
+                        <strong>{{ current_user.nome.split(' ')[0] }}</strong>
+                    </div>
+                    <img src="{{ url_for('static', filename='data/img_user/' ~ current_user.foto) }}"
+                        class="avatar me-3"
+                        alt="Foto de {{ current_user.nome }}">
+                    <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.logout') }}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </div>
+                {% else %}
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('main.login') }}" class="btn btn-outline-light btn-sm">Entrar</a>
+                    <a href="{{ url_for('main.cadastro') }}" class="btn btn-edenred btn-sm">Cadastrar-se</a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </nav>
 
     <!-- CONTAINER PRINCIPAL -->
-    <div class="container py-4">
+    <div class="container py-4" id="content">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}

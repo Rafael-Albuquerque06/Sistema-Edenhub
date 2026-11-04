@@ -22,6 +22,10 @@ instance/*.db
 *.swp
 *.swo
 
+# Testes
+.pytest_cache/
+tests/__pycache__/
+
 # Graphify outputs (do not commit)
 graphify-out/
 

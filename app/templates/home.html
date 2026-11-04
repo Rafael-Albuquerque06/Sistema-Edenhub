@@ -1,97 +1,123 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block title %}Dashboard - Edenhub{% endblock %}
 
-<div class="row">
+{% block content %}
+<!-- HERO -->
+<div class="row mb-4">
     <div class="col-12">
-        <h1 class="text-center mb-4 text-dark">Bem vindo ao Território</h1>
-        
-        <div class="mb-4">
-            <div class="row">
-                <p class="card-text text-dark">
-                    Ao acessar a plataforma você poderá, de forma rápida e fácil, comunicar-se e trocar ideias e opiniões com outros usuários através do módulo de comunicação.
-                    É possível também acompanhar suas pendências, usando a visão por SLA ou por prazo.
+        <div class="card card-edenred text-center py-4">
+            <div class="card-body">
+                <h1 class="display-5 fw-bold mb-2 text-dark">Bem vindo, {{ current_user.nome.split(' ')[0] }}!</h1>
+                <p class="lead text-muted mb-0">
+                    Gerencie suas indicações de cross-selling e acompanhe suas pendências.
                 </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Funcionalidades Principais -->
+<!-- STATS CARDS -->
 <div class="row mb-4">
-    <div class="col-12">
-        <h3 class="text-dark mb-3"></h3>
-    </div>
-    
-    <!-- Cross-Selling -->
-    <div class="col-md-3 mb-3">
-        <a href="{{ url_for('main.crosselling') }}" class="text-decoration-none">
-            <div class="card card-edenred funcionalidade-card h-100">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-dark">Cross-Selling</h5>
-                    <p class="card-text text-muted">Iniciar processo de vendas</p>
-                    <button class="btn btn-edenred">Iniciar</button>
-                </div>
-            </div>
-        </a>
-    </div>
-    
-    <!-- Cross-Selling Lote -->
-    <div class="col-md-3 mb-3">
-        <div class="card card-edenred funcionalidade-card h-100">
-            <div class="card-body text-center">
-                <h5 class="card-title text-dark">Cross-Selling Lote</h5>
-                <p class="card-text text-muted">Processamento em lote</p>
-                <button class="btn btn-edenred">Iniciar</button>
-            </div>
+    <div class="col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ minhas_pendencias }}</div>
+            <div class="stats-label">Indicações Pendentes</div>
         </div>
     </div>
-    
-    <!-- DC-Documento -->
-    <div class="col-md-3 mb-3">
-        <div class="card card-edenred funcionalidade-card h-100">
-            <div class="card-body text-center">
-                <h5 class="card-title text-dark">DC-Documento</h5>
-                <p class="card-text text-muted">Gestão documental</p>
-                <button class="btn btn-edenred">Iniciar</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- FL-Finalizar Itens em Lote -->
-    <div class="col-md-3 mb-3">
-        <div class="card card-edenred funcionalidade-card h-100">
-            <div class="card-body text-center">
-                <h5 class="card-title text-dark">FL-Finalizar Itens em Lote</h5>
-                <p class="card-text text-muted">Finalização em massa</p>
-                <button class="btn btn-edenred">Iniciar</button>
-            </div>
+    <div class="col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">0</div>
+            <div class="stats-label">Vendas Concluídas</div>
         </div>
     </div>
 </div>
 
-<!-- Pendências -->
-<div class="row">
-    <!-- Minhas Pendências -->
-    <div class="col-md-6 mb-3">
-        <a href="{{ url_for('main.minhas_pendencias') }}" class="text-decoration-none">
+<!-- FUNCIONALIDADES PRINCIPAIS -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center text-dark mb-4">Módulos do Sistema</h2>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('main.crosselling') }}" class="text-decoration-none">
             <div class="card card-edenred funcionalidade-card h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-dark">Minhas Pendências</h5>
-                    <h3 class="text-edenred">{{ minhas_pendencias }}</h3>
-                    <p class="card-text text-muted">Indicações pendentes do usuário</p>
+                <div class="card-body text-center">
+                    <i class="bi bi-arrow-left-right font-monospace fs-1 mb-3 text-edenred"></i>
+                    <h5 class="card-title text-dark">Cross-Selling</h5>
+                    <p class="card-text text-muted">Iniciar processo de vendas por CNPJ</p>
                 </div>
             </div>
         </a>
     </div>
-    
-    <!-- Pendências da Equipe -->
-    <div class="col-md-6 mb-3">
-        <div class="card card-edenred funcionalidade-card h-100">
+
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('main.portfolio') }}" class="text-decoration-none">
+            <div class="card card-edenred funcionalidade-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-briefcase font-monospace fs-1 mb-3 text-edenred"></i>
+                    <h5 class="card-title text-dark">Portfólio</h5>
+                    <p class="card-text text-muted">Catálogo de produtos e BUs</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('main.consulta_clientes') }}" class="text-decoration-none">
+            <div class="card card-edenred funcionalidade-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-search font-monospace fs-1 mb-3 text-edenred"></i>
+                    <h5 class="card-title text-dark">Consulta Clientes</h5>
+                    <p class="card-text text-muted">Buscar e gerenciar clientes cadastrados</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- MÓDULOS ADICIONAIS -->
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('main.minhas_pendencias') }}" class="text-decoration-none">
+            <div class="card card-edenred h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-dark">Minhas Pendências</h5>
+                            <p class="card-text text-muted small">Acompanhe suas indicações em análise</p>
+                        </div>
+                        <span class="badge bg-warning text-dark">{{ minhas_pendencias }}</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{{ url_for('main.comunicacao') }}" class="text-decoration-none">
+            <div class="card card-edenred h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-dark">Comunicação</h5>
+                            <p class="card-text text-muted small">Chat interno com sua equipe</p>
+                        </div>
+                        <i class="bi bi-chat-dots fs-4 text-edenred"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card card-edenred h-100">
             <div class="card-body">
-                <h5 class="card-title text-dark">Pendências da Equipe</h5>
-                <h3 class="text-danger">1984</h3>
-                <p class="card-text text-muted">Pendências do grupo</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title text-dark">Em Breve</h5>
+                        <p class="card-text text-muted small">Novos módulos em desenvolvimento</p>
+                    </div>
+                    <span class="badge bg-secondary">Em breve</span>
+                </div>
             </div>
         </div>
     </div>
