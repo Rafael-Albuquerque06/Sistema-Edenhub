@@ -145,10 +145,7 @@ edenhub/
 - ✅ Autenticação requerida para rotas sensíveis
 - ✅ Paginação de flash messages por categoria
 
-## 📄 Licença
-
-Este projeto está sob a licença MIT.
 
 ## 👨‍💻 Autor
 
-Desenvolvido como projeto de portfólio.
+Developed by Rafael Albuquerque for Edenred Challenge.
