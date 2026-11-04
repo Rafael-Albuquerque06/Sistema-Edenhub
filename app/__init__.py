@@ -60,4 +60,7 @@ def create_app():
     def internal_server_error(e):
         return render_template('404.html'), 500
 
+    with app.app_context():
+        db.create_all()
+
     return app
