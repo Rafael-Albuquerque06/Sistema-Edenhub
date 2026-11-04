@@ -2,6 +2,26 @@
 
 {% block content %}
 
+<!-- PROGRESS INDICATOR -->
+{% set etapas = ['cnpj', 'decisao', 'cadastro', 'bu', 'indicacao'] %}
+{% set nomes_etapas = ['CNPJ', 'Decisão', 'Cadastro', 'BU', 'Indicação'] %}
+{% set etapa_index = etapas.index(etapa) if etapa in etapas else 0 %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="progress-indicator">
+            {% for i, nome in enumerate(nomes_etapas) %}
+            <div class="progress-step{% if i < etapa_index %} completed{% elif i == etapa_index %} active{% endif %}">
+                <div class="progress-step-circle">{{ i + 1 }}</div>
+                <div class="progress-step-label">{{ nome }}</div>
+            </div>
+            {% if i < nomes_etapas|length - 1 %}
+            <div class="progress-connector{% if i < etapa_index %} completed{% endif %}"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 <!-- ETAPA 1: CONSULTA CNPJ -->
 {% if etapa == 'cnpj' %}
 <div class="row justify-content-center">

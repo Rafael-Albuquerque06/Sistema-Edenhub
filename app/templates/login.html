@@ -1,30 +1,32 @@
 {% extends 'base.html' %}
 
+{% block title %}Entrar - Edenhub{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card card-edenred">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4 text-dark">Entrar</h3>
-                
+
                 <form method="post">
                     {{ form.csrf_token }}
-                    
+
                     <div class="mb-3">
-                        {{ form.usuario_login.label(class="form-label text-dark") }}  <!-- 🔥 MUDAR AQUI -->
-                        {{ form.usuario_login(class="form-control", placeholder="Email, telefone ou Skype") }}  <!-- 🔥 MUDAR AQUI -->
-                        {% if form.usuario_login.errors %}  <!-- 🔥 MUDAR AQUI -->
+                        {{ form.usuario_login.label(class="form-label text-dark") }}
+                        {{ form.usuario_login(class="form-control form-control-custom", placeholder="Email, telefone ou Skype") }}
+                        {% if form.usuario_login.errors %}
                             <div class="text-danger">
-                                {% for error in form.usuario_login.errors %}  <!-- 🔥 MUDAR AQUI -->
+                                {% for error in form.usuario_login.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mb-3">
                         {{ form.senha.label(class="form-label text-dark") }}
-                        {{ form.senha(class="form-control", placeholder="Senha") }}
+                        {{ form.senha(class="form-control form-control-custom", placeholder="Senha") }}
                         {% if form.senha.errors %}
                             <div class="text-danger">
                                 {% for error in form.senha.errors %}
@@ -33,15 +35,14 @@
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="d-grid">
                         {{ form.btnSubmit(class="btn btn-edenred btn-lg") }}
                     </div>
                 </form>
-                
+
                 <div class="text-center mt-3">
-                    <a href="{{ url_for('main.cadastro') }}" class="text-muted"> Cadastre-se</a>
-                    <br>
+                    <a href="{{ url_for('cadastro') }}" class="text-muted">Não tem conta? Cadastre-se</a>
                 </div>
             </div>
         </div>

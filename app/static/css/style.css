@@ -1,9 +1,11 @@
 /* ==========================================================================
    Edenhub — Design System (ui-ux-pro-max)
    Identidade visual: vermelho Edenred + tokens de acessibilidade
+   Pattern: Trust & Authority + Conversion
+   Style: Accessible & Ethical
    ========================================================================== */
 
-/* --- Tokens de cor --- */
+/* --- Tokens de cor (Design System tokens com identidade Edenred) --- */
 :root {
   /* Identidade Edenred (marca) */
   --edenred-primary: #8B0000;
@@ -38,10 +40,22 @@
 
   /* Transições */
   --transition: all 0.2s ease;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 30px rgba(139, 0, 0, 0.15);
 }
 
+/* --- Reset base --- */
 * {
+  box-sizing: border-box;
+}
+
+html {
   font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 body {
@@ -52,16 +66,49 @@ body {
   margin: 0;
 }
 
+/* --- Tipografia (Roboto do design system) --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  color: var(--color-foreground);
+  line-height: 1.25;
+}
+
+h1 { font-size: 2.25rem; margin-bottom: var(--space-2); }
+h2 { font-size: 1.875rem; margin-bottom: var(--space-2); }
+h3 { font-size: 1.5rem; margin-bottom: var(--space-1); }
+h4 { font-size: 1.25rem; margin-bottom: var(--space-1); }
+h5 { font-size: 1.125rem; margin-bottom: var(--space-1); }
+p { margin-bottom: var(--space-2); }
+
 /* --- Utilitários de foco (acessibilidade) --- */
 :focus-visible {
   outline: 3px solid var(--color-ring);
   outline-offset: 2px;
 }
 
+/* Skip link para acessibilidade */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--edenred-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+  text-decoration: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 /* --- NAVBAR --- */
 .navbar-edenred {
   background: linear-gradient(135deg, var(--edenred-primary), var(--edenred-dark));
-  box-shadow: 0 2px 15px rgba(139, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
   padding: 0.8rem 0;
 }
 
@@ -79,20 +126,27 @@ body {
   font-size: 1.8rem;
 }
 
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%27' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
 /* --- CARDS --- */
 .card-edenred {
-  border: none;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   transition: var(--transition);
-  border-top: 4px solid var(--edenred-primary);
-  margin-bottom: var(--space-3);
   background: var(--color-card);
+  margin-bottom: var(--space-3);
 }
 
 .card-edenred:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(139, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .card-header-edenred {
@@ -115,7 +169,7 @@ body {
 .btn-edenred {
   background: linear-gradient(135deg, var(--edenred-primary), var(--edenred-secondary));
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   color: white;
   font-weight: 500;
   padding: 0.5rem 1.5rem;
@@ -136,7 +190,7 @@ body {
 .btn-outline-edenred {
   border: 2px solid var(--edenred-primary);
   color: var(--edenred-primary);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   font-weight: 500;
   transition: var(--transition);
   cursor: pointer;
@@ -149,6 +203,11 @@ body {
 .btn-outline-edenred:hover {
   background-color: var(--edenred-primary);
   color: white;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.875rem;
 }
 
 /* --- BADGES --- */
@@ -166,7 +225,7 @@ body {
   background: var(--color-card);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .table-edenred thead {
@@ -178,12 +237,15 @@ body {
   font-weight: 600;
   padding: 1rem;
   border: none;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .table-edenred td {
   padding: 1rem;
   vertical-align: middle;
-  border-color: #eee;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .table-edenred tbody tr {
@@ -233,11 +295,11 @@ body {
   border-radius: var(--radius);
   padding: 0.5rem;
   margin: var(--space-2) 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-link-custom {
-  color: #666;
+  color: var(--color-muted-foreground);
   font-weight: 500;
   padding: 0.7rem 1.2rem;
   border-radius: 0.5rem;
@@ -262,7 +324,7 @@ body {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .avatar-lg {
@@ -298,13 +360,13 @@ body {
   border-radius: var(--radius);
   padding: 1.5rem;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   transition: var(--transition);
 }
 
 .stats-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .stats-number {
@@ -315,18 +377,19 @@ body {
 }
 
 .stats-label {
-  color: #666;
-  font-size: 0.9rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 /* --- FORM CONTROLS --- */
 .form-control-custom {
-  border: 2px solid #e0e0e0;
-  border-radius: 0.5rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
   padding: 0.8rem 1rem;
   transition: var(--transition);
+  background: var(--color-card);
 }
 
 .form-control-custom:focus {
@@ -335,30 +398,86 @@ body {
   outline: none;
 }
 
+.form-control-custom::placeholder {
+  color: var(--color-muted-foreground);
+}
+
 /* --- FOOTER --- */
 .footer {
   margin-top: var(--space-4);
   padding: 1.5rem 0;
   text-align: center;
-  color: #666;
-  font-size: 0.9rem;
-  border-top: 1px solid #eee;
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--color-border);
 }
 
-/* --- Chat: área de mensagens --- */
-.message-area {
-  max-height: 500px;
-  overflow-y: auto;
-  background: #fafafa;
-  border-radius: var(--radius);
+/* --- Progress indicator para cross-selling --- */
+.progress-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
 }
 
-.message-bubble-width {
-  max-width: 70%;
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
 }
 
-.message-textarea {
-  resize: none;
+.progress-step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-muted-foreground);
+  font-weight: 700;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-1);
+  transition: var(--transition);
+}
+
+.progress-step.completed .progress-step-circle {
+  background: var(--edenred-primary);
+  border-color: var(--edenred-primary);
+  color: white;
+}
+
+.progress-step.active .progress-step-circle {
+  background: var(--edenred-primary);
+  border-color: var(--edenred-primary);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(139, 0, 0, 0.2);
+}
+
+.progress-step-label {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  text-align: center;
+}
+
+.progress-step.completed .progress-step-label,
+.progress-step.active .progress-step-label {
+  color: var(--edenred-primary);
+  font-weight: 600;
+}
+
+.progress-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--color-border);
+  margin: 0 var(--space-1);
+  position: relative;
+}
+
+.progress-connector.completed {
+  background: var(--edenred-primary);
 }
 
 /* --- Portfolio: imagens responsivas --- */
@@ -366,24 +485,6 @@ body {
   max-width: 100%;
   height: auto;
   display: block;
-}
-
-/* --- Skip link para acessibilidade --- */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--edenred-primary);
-  color: white;
-  padding: 0.5rem 1rem;
-  z-index: 1000;
-  text-decoration: none;
-  border-radius: 0 0 var(--radius) var(--radius);
-  transition: top 0.3s;
-}
-
-.skip-link:focus {
-  top: 0;
 }
 
 /* --- Responsividade básica --- */
@@ -401,7 +502,11 @@ body {
   .navbar-edenred .navbar-toggler {
     border-color: rgba(255, 255, 255, 0.5);
   }
-  .navbar-edenred .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%27' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-  }
+  h1 { font-size: 1.875rem; }
+  h2 { font-size: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .stats-number { font-size: 2rem; }
+  .progress-indicator { flex-wrap: wrap; gap: var(--space-1); }
 }
