@@ -77,5 +77,12 @@ def create_app():
             app.logger.info('Banco de dados inicializado com sucesso')
         except Exception as e:
             app.logger.error(f'Erro ao criar tabelas: {e}')
+            import time
+            time.sleep(2)
+            try:
+                db.create_all()
+                app.logger.info('Banco de dados inicializado com sucesso na segunda tentativa')
+            except Exception as e2:
+                app.logger.error(f'Erro ao criar tabelas na segunda tentativa: {e2}')
 
     return app
