@@ -101,11 +101,11 @@
                 <p class="text-dark mb-4">O que deseja fazer?</p>
 
                 <div class="d-grid gap-2">
-                    <a href="{{ url_for('crosselling', etapa='decisao', cnpj=cnpj, acao='segue') }}"
+                    <a href="{{ url_for('main.crosselling', etapa='decisao', cnpj=cnpj, acao='segue') }}"
                         class="btn btn-success btn-lg">Continuar Processo</a>
-                    <a href="{{ url_for('crosselling', etapa='decisao', cnpj=cnpj, acao='corrige') }}"
+                    <a href="{{ url_for('main.crosselling', etapa='decisao', cnpj=cnpj, acao='corrige') }}"
                         class="btn btn-warning">Corrigir CNPJ</a>
-                    <a href="{{ url_for('crosselling', etapa='decisao', cnpj=cnpj, acao='cancela') }}"
+                    <a href="{{ url_for('main.crosselling', etapa='decisao', cnpj=cnpj, acao='cancela') }}"
                         class="btn btn-danger">Cancelar</a>
                 </div>
             </div>
