@@ -3,19 +3,29 @@
 {% block content %}
 
 <!-- PROGRESS INDICATOR -->
-{% set etapas = ['cnpj', 'decisao', 'cadastro', 'bu', 'indicacao'] %}
-{% set nomes_etapas = ['CNPJ', 'Decisão', 'Cadastro', 'BU', 'Indicação'] %}
-{% set etapa_index = etapas.index(etapa) if etapa in etapas else 0 %}
+{% set etapas = [
+    (1, 'cnpj', 'CNPJ'),
+    (2, 'decisao', 'Decisão'),
+    (3, 'cadastro', 'Cadastro'),
+    (4, 'bu', 'BU'),
+    (5, 'indicacao', 'Indicação')
+] %}
+{% set etapa_index = 0 %}
+{% for i, etapa_key, nome in etapas %}
+    {% if etapa_key == etapa %}
+        {% set etapa_index = i - 1 %}
+    {% endif %}
+{% endfor %}
 <div class="row mb-4">
     <div class="col-12">
         <div class="progress-indicator">
-            {% for i, nome in enumerate(nomes_etapas) %}
-            <div class="progress-step{% if i < etapa_index %} completed{% elif i == etapa_index %} active{% endif %}">
-                <div class="progress-step-circle">{{ i + 1 }}</div>
+            {% for i, etapa_key, nome in etapas %}
+            <div class="progress-step{% if i - 1 < etapa_index %} completed{% elif i - 1 == etapa_index %} active{% endif %}">
+                <div class="progress-step-circle">{{ i }}</div>
                 <div class="progress-step-label">{{ nome }}</div>
             </div>
-            {% if i < nomes_etapas|length - 1 %}
-            <div class="progress-connector{% if i < etapa_index %} completed{% endif %}"></div>
+            {% if i < etapas|length %}
+            <div class="progress-connector{% if i - 1 < etapa_index %} completed{% endif %}"></div>
             {% endif %}
             {% endfor %}
         </div>
