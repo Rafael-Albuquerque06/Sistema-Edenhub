@@ -99,6 +99,16 @@ def index():
     return render_template('index.html')
 
 
+@main_bp.route('/health')
+def health():
+    """Endpoint de diagnóstico para verificar se o banco está acessível."""
+    try:
+        db.session.execute(db.text('SELECT 1'))
+        return {'status': 'ok', 'database': 'conectado'}, 200
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}, 500
+
+
 @main_bp.route('/home')
 @login_required
 def home():
