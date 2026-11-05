@@ -8,7 +8,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URI
-        value: sqlite:////opt/render/project/src/instance/edenred.db
+        value: postgresql://edenhub:FIYhPqC1qhAKc8h4b9rJ5qBA4GvSCQav@dpg-dblu320u01pc73foou60-a/edenhub
       - key: FLASK_APP
         value: main.py
       - key: FLASK_ENV
