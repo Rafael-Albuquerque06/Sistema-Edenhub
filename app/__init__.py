@@ -70,4 +70,11 @@ def create_app():
             500,
         )
 
+    # Garantir que as tabelas sejam criadas no primeiro acesso
+    with app.app_context():
+        try:
+            db.create_all()
+        except Exception:
+            pass
+
     return app
