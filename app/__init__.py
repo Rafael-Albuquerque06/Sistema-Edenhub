@@ -74,7 +74,8 @@ def create_app():
     with app.app_context():
         try:
             db.create_all()
-        except Exception:
-            pass
+            app.logger.info('Banco de dados inicializado com sucesso')
+        except Exception as e:
+            app.logger.error(f'Erro ao criar tabelas: {e}')
 
     return app
