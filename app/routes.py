@@ -102,10 +102,15 @@ def index():
 @main_bp.route('/home')
 @login_required
 def home():
-    minhas_pendencias_count = Indicacao.query.filter_by(
-        usuario_id=current_user.id,
-        status='Pendente',
-    ).count()
+    try:
+        minhas_pendencias_count = Indicacao.query.filter_by(
+            usuario_id=current_user.id,
+            status='Pendente',
+        ).count()
+    except Exception:
+        db.session.rollback()
+        minhas_pendencias_count = 0
+        flash('Erro ao carregar pendências. Tente novamente.', 'error')
     return render_template('home.html', minhas_pendencias=minhas_pendencias_count)
 
 
@@ -150,8 +155,11 @@ def crosselling():
             return redirect(url_for('main.home'))
 
         empresa = Empresa.query.filter_by(cnpj=cnpj).first()
+        if not empresa:
+            flash('Empresa não encontrada.', 'error')
+            return redirect(url_for('main.crosselling'))
         responsavel_info = None
-        if empresa and empresa.is_client and empresa.responsavel:
+        if empresa.is_client and empresa.responsavel:
             responsavel_info = {
                 'nome': empresa.responsavel.nome,
                 'email': empresa.responsavel.email,
@@ -180,6 +188,10 @@ def crosselling():
         empresa_id = request.args.get('empresa_id')
         empresa = Empresa.query.get(empresa_id)
 
+        if not empresa:
+            flash('Empresa não encontrada.', 'error')
+            return redirect(url_for('main.crosselling'))
+
         if request.method == 'POST':
             produtos_selecionados = request.form.getlist('produtos')
             if not form_bu.bu_escolhido.data or not form_bu.acao.data or not produtos_selecionados:
@@ -190,9 +202,17 @@ def crosselling():
                 )
 
             produtos_str = ', '.join(produtos_selecionados)
-            empresa, etapa_saida = vincular_bu_empresa(
-                empresa, form_bu.bu_escolhido.data, form_bu.acao.data, current_user,
-            )
+            try:
+                empresa, etapa_saida = vincular_bu_empresa(
+                    empresa, form_bu.bu_escolhido.data, form_bu.acao.data, current_user,
+                )
+            except Exception:
+                db.session.rollback()
+                flash('Erro ao processar a venda. Tente novamente.', 'error')
+                return render_template(
+                    'crosselling.html', etapa='bu',
+                    form_bu=form_bu, empresa=empresa,
+                )
             if etapa_saida == 'venda_concluida':
                 flash(f'Venda concluída com sucesso para a empresa: {empresa.razao_social}', 'success')
                 return redirect(url_for('main.home'))
@@ -210,12 +230,16 @@ def crosselling():
         empresa_id = request.args.get('empresa_id')
         bu = request.args.get('bu')
         produtos = request.args.get('produtos', '')
-        empresa = Empresa.query.get(empresa_id)
+        empresa = Empresa.query.get(empresa_id) if empresa_id else None
+
+        if not empresa:
+            flash('Empresa não encontrada.', 'error')
+            return redirect(url_for('main.crosselling'))
 
         if request.method == 'POST' and form_indicacao.validate_on_submit():
             try:
                 criar_indicacao(
-                    empresa_id=empresa_id,
+                    empresa_id=empresa.id,
                     usuario_id=current_user.id,
                     bu=bu,
                     produtos=produtos,
@@ -245,57 +269,75 @@ def crosselling():
 @main_bp.route('/consulta_clientes')
 @login_required
 def consulta_clientes():
-    pesquisa = request.args.get('pesquisa', '')
+    try:
+        pesquisa = request.args.get('pesquisa', '')
 
-    query = Empresa.query.filter_by(is_client=True)
+        query = Empresa.query.filter_by(is_client=True)
 
-    if pesquisa:
-        query = query.filter(
-            (Empresa.razao_social.contains(pesquisa)) |
-            (Empresa.cnpj.contains(pesquisa)) |
-            (Empresa.municipio.contains(pesquisa)) |
-            (Empresa.responsavel.has(Usuario.nome.contains(pesquisa)))
+        if pesquisa:
+            query = query.filter(
+                (Empresa.razao_social.contains(pesquisa)) |
+                (Empresa.cnpj.contains(pesquisa)) |
+                (Empresa.municipio.contains(pesquisa)) |
+                (Empresa.responsavel.has(Usuario.nome.contains(pesquisa)))
+            )
+
+        # Eager load para evitar N+1 no responsável
+        clientes = query.options(db.joinedload(Empresa.responsavel)).order_by(Empresa.razao_social).all()
+
+        # Contar indicações pendentes por empresa (evita N+1 com uma query agregada)
+        from sqlalchemy import func
+        pendentes_count = (
+            db.session.query(Indicacao.empresa_id, func.count(Indicacao.id).label('qtd'))
+            .filter_by(status='Pendente')
+            .group_by(Indicacao.empresa_id)
+            .all()
         )
+        pendentes_map = {empresa_id: qtd for empresa_id, qtd in pendentes_count}
 
-    # Eager load para evitar N+1 no responsável
-    clientes = query.options(db.joinedload(Empresa.responsavel)).order_by(Empresa.razao_social).all()
+        for cliente in clientes:
+            cliente.indicacoes_pendentes = pendentes_map.get(cliente.id, 0)
 
-    # Contar indicações pendentes por empresa (evita N+1 com uma query agregada)
-    from sqlalchemy import func
-    pendentes_count = (
-        db.session.query(Indicacao.empresa_id, func.count(Indicacao.id).label('qtd'))
-        .filter_by(status='Pendente')
-        .group_by(Indicacao.empresa_id)
-        .all()
-    )
-    pendentes_map = {empresa_id: qtd for empresa_id, qtd in pendentes_count}
-
-    for cliente in clientes:
-        cliente.indicacoes_pendentes = pendentes_map.get(cliente.id, 0)
-
-    return render_template(
-        'consulta_clientes.html', clientes=clientes, pesquisa=pesquisa,
-    )
+        return render_template(
+            'consulta_clientes.html', clientes=clientes, pesquisa=pesquisa,
+        )
+    except Exception:
+        db.session.rollback()
+        flash('Erro ao carregar clientes. Tente novamente.', 'error')
+        return render_template(
+            'consulta_clientes.html', clientes=[], pesquisa=pesquisa,
+        )
 
 
 @main_bp.route('/minhas_pendencias')
 @login_required
 def minhas_pendencias():
-    indicacoes = Indicacao.query.filter_by(
-        usuario_id=current_user.id,
-        status='Pendente',
-    ).order_by(Indicacao.data_indicacao.desc()).all()
+    try:
+        indicacoes = Indicacao.query.filter_by(
+            usuario_id=current_user.id,
+            status='Pendente',
+        ).order_by(Indicacao.data_indicacao.desc()).all()
+    except Exception:
+        db.session.rollback()
+        indicacoes = []
+        flash('Erro ao carregar pendências. Tente novamente.', 'error')
     return render_template('minhas_pendencias.html', indicacoes=indicacoes)
 
 
 @main_bp.route('/comunicacao')
 @login_required
 def comunicacao():
-    conversas = Conversa.query.filter(
-        (Conversa.usuario1_id == current_user.id) |
-        (Conversa.usuario2_id == current_user.id)
-    ).all()
-    outros_usuarios = Usuario.query.filter(Usuario.id != current_user.id).all()
+    try:
+        conversas = Conversa.query.filter(
+            (Conversa.usuario1_id == current_user.id) |
+            (Conversa.usuario2_id == current_user.id)
+        ).all()
+        outros_usuarios = Usuario.query.filter(Usuario.id != current_user.id).all()
+    except Exception:
+        db.session.rollback()
+        conversas = []
+        outros_usuarios = []
+        flash('Erro ao carregar conversas. Tente novamente.', 'error')
     return render_template(
         'comunicacao.html', conversas=conversas, outros_usuarios=outros_usuarios,
     )
@@ -311,12 +353,21 @@ def ver_conversa(conversa_id):
 
     form = MensagemForm()
     if form.validate_on_submit():
-        enviar_mensagem(conversa.id, current_user.id, form.mensagem.data)
-        flash('Mensagem enviada!', 'success')
+        try:
+            enviar_mensagem(conversa.id, current_user.id, form.mensagem.data)
+            flash('Mensagem enviada!', 'success')
+        except Exception:
+            db.session.rollback()
+            flash('Erro ao enviar mensagem. Tente novamente.', 'error')
         return redirect(url_for('main.ver_conversa', conversa_id=conversa.id))
 
-    mensagens = marcar_mensagens_lidas(conversa.id, current_user.id)
-    mensagens = sorted(mensagens, key=lambda m: m.data_envio)
+    try:
+        mensagens = marcar_mensagens_lidas(conversa.id, current_user.id)
+        mensagens = sorted(mensagens, key=lambda m: m.data_envio)
+    except Exception:
+        db.session.rollback()
+        mensagens = []
+        flash('Erro ao carregar mensagens. Tente novamente.', 'error')
 
     outro_usuario = conversa.usuario2 if conversa.usuario1_id == current_user.id else conversa.usuario1
     return render_template(
