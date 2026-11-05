@@ -54,10 +54,20 @@ def create_app():
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template('404.html'), 404
+        return (
+            "<html><body><h1>404 - Página não encontrada</h1>"
+            "<p>A página que você procura não existe.</p>"
+            "<a href='/'>Voltar ao início</a></body></html>",
+            404,
+        )
 
     @app.errorhandler(500)
     def internal_server_error(e):
-        return render_template('404.html'), 500
+        return (
+            "<html><body><h1>500 - Erro interno do servidor</h1>"
+            "<p>Ocorreu um erro interno. Tente novamente mais tarde.</p>"
+            "<a href='/'>Voltar ao início</a></body></html>",
+            500,
+        )
 
     return app
