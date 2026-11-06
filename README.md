@@ -28,7 +28,7 @@ Sistema completo para gestão de cross-selling e comunicação interna, desenvol
 ### 🔍 Validação e Integrações
 - **Validação de CNPJ** com dígitos verificadores (antes do cadastro)
 - **Prefill via ReceitaWS**: dados cadastrais preenchidos automaticamente por CNPJ (fallback manual)
-- **Endereço via ViaCEP**: forma do CEP com máscara + preenchimento automático (fallback manual)
+- **Endereço via ViaCEP**: campo do CEP com máscara + preenchimento automático (fallback manual)
 - **Máscaras de entrada** para CNPJ, telefone e CEP
 
 ## 🛠️ Tecnologias Utilizadas
@@ -91,6 +91,8 @@ SECRET_KEY=sua_chave_secreta_muito_segura_aqui
 DATABASE_URI=sqlite:///edenred.db
 ```
 
+> 💡 Para gerar uma chave secreta forte, rode `python sk_create.py` e use o valor gerado em `SECRET_KEY`.
+
 ### 5. Inicialize o banco de dados
 
 ```bash
@@ -108,9 +110,10 @@ Acesse: `http://localhost:5000`
 ## 🧪 Executando os Testes
 
 ```bash
-pip install pytest
 python3 -m pytest tests/ -v
 ```
+
+50 testes automatizados cobrindo modelos, rotas, serviços, integrações (ViaCEP/ReceitaWS) e o chat em tempo real.
 
 ## 🐳 Usando Docker (opcional)
 
@@ -145,6 +148,7 @@ edenhub/
 ├── tests/                   # Testes pytest (modelos, rotas, serviços, APIs, chat)
 ├── main.py                  # Servidor de desenvolvimento (socketio.run)
 ├── wsgi.py                  # Entry point para gunicorn
+├── run_migrations.py        # Bootstrap das migrations no boot do container
 ├── sk_create.py             # Gerador de chave secreta
 ├── requirements.txt         # Dependências
 ├── .env.example             # Exemplo de variáveis de ambiente
@@ -171,7 +175,7 @@ No Render (serviço Docker): o container executa `run_migrations.py` no boot (ap
 - ✅ Sessões seguras com Flask-Login
 - ✅ Validação de dados em backend e frontend
 - ✅ Autenticação requerida para rotas sensíveis
-- ✅ Paginação de flash messages por categoria
+- ✅ Mensagens flash categorizadas (sucesso/erro/info) com fechamento acessível
 
 
 ## 👨‍💻 Autor
