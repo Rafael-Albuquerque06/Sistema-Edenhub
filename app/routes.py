@@ -213,11 +213,13 @@ def crosselling():
             flash('Empresa não encontrada.', 'error')
             return redirect(url_for('main.crosselling'))
 
+        form_bu = BUForm()
+
         if request.method == 'POST':
             produtos_selecionados = request.form.getlist('produtos')
             if not produto_form_valido():
                 flash('Por favor, preencha todos os campos obrigatórios.', 'error')
-                return render_template('crosselling.html', etapa='bu', empresa=empresa)
+                return render_template('crosselling.html', etapa='bu', empresa=empresa, form_bu=form_bu)
             try:
                 empresa, etapa_saida = vincular_bu_empresa(
                     empresa, request.form.get('bu_escolhido', ''),
@@ -226,7 +228,7 @@ def crosselling():
             except Exception:
                 db.session.rollback()
                 flash('Erro ao processar a venda. Tente novamente.', 'error')
-                return render_template('crosselling.html', etapa='bu', empresa=empresa)
+                return render_template('crosselling.html', etapa='bu', empresa=empresa, form_bu=form_bu)
             if etapa_saida == 'venda_concluida':
                 flash(f'Venda concluída com sucesso para a empresa: {empresa.razao_social}', 'success')
                 return redirect(url_for('main.home'))
@@ -235,7 +237,7 @@ def crosselling():
                 empresa_id=empresa.id, bu=request.form['bu_escolhido'],
                 produtos=', '.join(produtos_selecionados),
             ))
-        return render_template('crosselling.html', etapa='bu', empresa=empresa)
+        return render_template('crosselling.html', etapa='bu', empresa=empresa, form_bu=form_bu)
 
     elif etapa == 'indicacao':
         form_indicacao = IndicacaoForm()

@@ -59,8 +59,8 @@
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 table-edenred">
+            <div class="table-responsive" id="tabelaClientesWrap">
+                <table class="table table-hover align-middle mb-0 table-edenred" id="tabelaClientes">
                     <thead>
                         <tr>
                             <th class="ps-4">CNPJ</th>
@@ -121,22 +121,24 @@
                                     <div class="mb-2">
                                         {% if cliente.telefone_contato %}
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="bi bi-telephone text-muted me-2"></i>
+                                            <i class="bi bi-telephone text-muted me-2" aria-hidden="true"></i>
                                             <span class="text-dark">{{ cliente.telefone_contato }}</span>
                                             <a href="tel:{{ cliente.telefone_contato|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
-                                               class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Ligar">
-                                                <i class="bi bi-telephone-outbound"></i>
+                                               class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Ligar"
+                                               aria-label="Ligar para o contato">
+                                                <i class="bi bi-telephone-outbound" aria-hidden="true"></i>
                                             </a>
                                         </div>
                                         {% endif %}
 
                                         {% if cliente.celular_contato %}
                                         <div class="d-flex align-items-center">
-                                            <i class="bi bi-phone text-muted me-2"></i>
+                                            <i class="bi bi-phone text-muted me-2" aria-hidden="true"></i>
                                             <span class="text-dark">{{ cliente.celular_contato }}</span>
                                             <a href="tel:{{ cliente.celular_contato|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
-                                               class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Ligar">
-                                                <i class="bi bi-telephone-outbound"></i>
+                                               class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Ligar"
+                                               aria-label="Ligar para o contato">
+                                                <i class="bi bi-telephone-outbound" aria-hidden="true"></i>
                                             </a>
                                         </div>
                                         {% endif %}
@@ -145,11 +147,11 @@
 
                                     {% if cliente.email_contato %}
                                     <div class="d-flex align-items-center">
-                                        <i class="bi bi-envelope text-muted me-2"></i>
+                                        <i class="bi bi-envelope text-muted me-2" aria-hidden="true"></i>
                                         <small class="text-dark">{{ cliente.email_contato }}</small>
                                         <a href="mailto:{{ cliente.email_contato }}"
-                                           class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Enviar email">
-                                            <i class="bi bi-envelope-arrow-up"></i>
+                                           class="btn btn-sm btn-outline-edenred ms-2" data-bs-toggle="tooltip" title="Enviar email" aria-label="Enviar email para o contato">
+                                            <i class="bi bi-envelope-arrow-up" aria-hidden="true"></i>
                                         </a>
                                     </div>
                                     {% endif %}
@@ -196,16 +198,17 @@
                                         </div>
                                         <div class="mt-2">
                                             <a href="{{ url_for('main.nova_conversa', usuario_id=cliente.responsavel.id) }}"
-                                               class="btn btn-sm btn-outline-edenred me-1" data-bs-toggle="tooltip" title="Enviar mensagem">
-                                                <i class="bi bi-chat"></i>
+                                               class="btn btn-sm btn-outline-edenred me-1" data-bs-toggle="tooltip" title="Enviar mensagem" aria-label="Enviar mensagem para o responsavel">
+                                                <i class="bi bi-chat" aria-hidden="true"></i>
                                             </a>
                                             <a href="mailto:{{ cliente.responsavel.email }}"
                                                class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="tooltip" title="Enviar email">
                                                 <i class="bi bi-envelope"></i>
                                             </a>
                                             <a href="tel:{{ cliente.responsavel.telefone|replace('(', '')|replace(')', '')|replace(' ', '')|replace('-', '') }}"
-                                               class="btn btn-sm btn-outline-edenred" data-bs-toggle="tooltip" title="Ligar para {{ cliente.responsavel.telefone }}">
-                                                <i class="bi bi-telephone-outbound"></i>
+                                               class="btn btn-sm btn-outline-edenred" data-bs-toggle="tooltip" title="Ligar para {{ cliente.responsavel.telefone }}"
+                                               aria-label="Ligar para o responsavel">
+                                                <i class="bi bi-telephone-outbound" aria-hidden="true"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -288,11 +291,13 @@
                         Total: <strong>{{ clientes|length }}</strong> cliente(s)
                     </div>
                     <div class="btn-group">
-                        <button class="btn btn-outline-edenred btn-sm">
-                            <i class="bi bi-download me-1"></i> Exportar
+                        <button class="btn btn-outline-edenred btn-sm" type="button" id="btnExportarCSV"
+                            aria-label="Exportar clientes atuais como arquivo CSV">
+                            <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar
                         </button>
-                        <button class="btn btn-outline-edenred btn-sm">
-                            <i class="bi bi-printer me-1"></i> Imprimir
+                        <button class="btn btn-outline-edenred btn-sm" type="button" id="btnImprimir"
+                            aria-label="Imprimir lista de clientes">
+                            <i class="bi bi-printer me-1" aria-hidden="true"></i> Imprimir
                         </button>
                     </div>
                 </div>
@@ -307,6 +312,33 @@
         var tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltips.map(function (tooltip) {
             return new bootstrap.Tooltip(tooltip);
+        });
+
+        // Botao "Imprimir": imprime so a area da tabela (pagina inteira como fallback)
+        document.getElementById('btnImprimir').addEventListener('click', function () {
+            window.print();
+        });
+
+        // Botao "Exportar": exporta o corpo da tabela para CSV
+        document.getElementById('btnExportarCSV').addEventListener('click', function () {
+            var linhas = document.querySelectorAll('#tabelaClientes tbody tr');
+            var csv = ['CNPJ;Razao Social;Contato;Local;Responsavel;BUs;Status'];
+            linhas.forEach(function (linha) {
+                var colunas = linha.querySelectorAll('td');
+                var valores = [];
+                colunas.forEach(function (td) {
+                    valores.push(td.textContent.replace(/\s+/g, ' ').trim());
+                });
+                if (valores.length) { csv.push(valores.join(';')); }
+            });
+            var blob = new Blob(["\uFEFF" + csv.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'clientes-edenred.csv';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
         });
     });
 </script>

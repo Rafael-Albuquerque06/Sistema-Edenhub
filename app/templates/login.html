@@ -9,14 +9,33 @@
             <div class="card-body">
                 <h3 class="card-title text-center mb-4 text-dark">Entrar</h3>
 
-                <form method="post">
+                <form method="post" novalidate>
                     {{ form.csrf_token }}
+                    {% if form.errors %}
+                    <div class="alert-message alert-error" role="alert" tabindex="-1" id="errosForm">
+                        <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                        <strong>Corrija os campos abaixo:</strong>
+                        <ul class="mb-0 ms-3">
+                            {% for campo, erros in form.errors.items() %}
+                            {% if campo != 'csrf_token' %}
+                            {% for erro in erros %}
+                            <li>{{ campo }}: {{ erro }}</li>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% set desc_login = {'aria-describedby': 'usuario_login-erro'} if form.usuario_login.errors else {} %}
+                    {% set desc_senha = {'aria-describedby': 'senha-erro'} if form.senha.errors else {} %}
 
                     <div class="mb-3">
                         {{ form.usuario_login.label(class="form-label text-dark") }}
-                        {{ form.usuario_login(class="form-control form-control-custom", placeholder="Email, telefone ou Skype") }}
+                        {{ form.usuario_login(class="form-control form-control-custom",
+                        placeholder="Email, telefone ou Skype", autocomplete="username", **desc_login) }}
                         {% if form.usuario_login.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger" id="usuario_login-erro" role="alert">
                                 {% for error in form.usuario_login.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
@@ -26,9 +45,10 @@
 
                     <div class="mb-3">
                         {{ form.senha.label(class="form-label text-dark") }}
-                        {{ form.senha(class="form-control form-control-custom", placeholder="Senha") }}
+                        {{ form.senha(class="form-control form-control-custom",
+                        placeholder="Senha", autocomplete="current-password", **desc_senha) }}
                         {% if form.senha.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger" id="senha-erro" role="alert">
                                 {% for error in form.senha.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}

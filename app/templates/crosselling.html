@@ -10,25 +10,25 @@
     (4, 'bu', 'BU'),
     (5, 'indicacao', 'Indicação')
 ] %}
-{% set etapa_index = 0 %}
+{% set ns = namespace(index=0) %}
 {% for i, etapa_key, nome in etapas %}
     {% if etapa_key == etapa %}
-        {% set etapa_index = i - 1 %}
+        {% set ns.index = i - 1 %}
     {% endif %}
 {% endfor %}
 <div class="row mb-4">
     <div class="col-12">
-        <div class="progress-indicator">
+        <ol class="progress-indicator" aria-label="Etapas do cross-selling: etapa {{ ns.index + 1 }} de {{ etapas|length }}">
             {% for i, etapa_key, nome in etapas %}
-            <div class="progress-step{% if i - 1 < etapa_index %} completed{% elif i - 1 == etapa_index %} active{% endif %}">
-                <div class="progress-step-circle">{{ i }}</div>
+            <li class="progress-step{% if i - 1 < ns.index %} completed{% elif i - 1 == ns.index %} active{% endif %}"{% if i - 1 == ns.index %} aria-current="step"{% endif %}>
+                <div class="progress-step-circle" aria-hidden="true">{{ i }}</div>
                 <div class="progress-step-label">{{ nome }}</div>
-            </div>
+            </li>
             {% if i < etapas|length %}
-            <div class="progress-connector{% if i - 1 < etapa_index %} completed{% endif %}"></div>
+            <div class="progress-connector{% if i - 1 < ns.index %} completed{% endif %}" aria-hidden="true"></div>
             {% endif %}
             {% endfor %}
-        </div>
+        </ol>
     </div>
 </div>
 
@@ -75,29 +75,29 @@
 
                 {% if empresa.eh_cliente and responsavel %}
                 <div class="alert alert-success mt-3">
-                    <h5>👤 Responsável pelo Cliente:</h5>
+                    <h5><i class="bi bi-person-check" aria-hidden="true"></i> Responsável pelo Cliente:</h5>
                     <div class="d-flex align-items-center justify-content-center mt-2">
                         <img src="{{ url_for('static', filename='data/img_user/' ~ responsavel.foto) }}"
-                            class="rounded-circle me-3 avatar-lg">
+                            class="rounded-circle me-3 avatar-lg" alt="Foto de {{ responsavel.nome }}">
                         <div class="text-start">
                             <strong class="text-dark">{{ responsavel.nome }}</strong><br>
-                            <small class="text-muted">📧 {{ responsavel.email }}</small><br>
-                            <small class="text-muted">📞 {{ responsavel.telefone }}</small>
+                            <small class="text-muted"><i class="bi bi-envelope" aria-hidden="true"></i> {{ responsavel.email }}</small><br>
+                            <small class="text-muted"><i class="bi bi-telephone" aria-hidden="true"></i> {{ responsavel.telefone }}</small>
                         </div>
                     </div>
                     <div class="mt-3">
                         <a href="{{ url_for('main.nova_conversa', usuario_id=empresa.responsavel_id) }}"
                             class="btn btn-sm btn-outline-primary">
-                            💬 Enviar mensagem
+                            <i class="bi bi-chat" aria-hidden="true"></i> Enviar mensagem
                         </a>
                         <a href="mailto:{{ responsavel.email }}" class="btn btn-sm btn-outline-secondary ms-2">
-                            📩 Enviar email
+                            <i class="bi bi-envelope-paper" aria-hidden="true"></i> Enviar email
                         </a>
                     </div>
                 </div>
                 {% elif empresa.eh_cliente %}
                 <div class="alert alert-warning mt-3">
-                    <small>⚠️ Este cliente não possui um responsável atribuído.</small>
+                    <small><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> Este cliente não possui um responsável atribuído.</small>
                 </div>
                 {% endif %}
                 <!-- FIM DA NOVA SEÇÃO -->
@@ -135,7 +135,21 @@
 
                 <form method="post" class="mt-4">
                     {{ form_basico.csrf_token }}
-
+                    {% if form_basico.errors %}
+                    <div class="alert-message alert-error" role="alert" tabindex="-1" id="errosForm">
+                        <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                        <strong>Corrija os campos abaixo:</strong>
+                        <ul class="mb-0 ms-3">
+                            {% for campo, erros in form_basico.errors.items() %}
+                            {% if campo != 'csrf_token' %}
+                            {% for erro in erros %}
+                            <li>{{ campo }}: {{ erro }}</li>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
                     <h5 class="text-dark mt-4">Dados da Empresa</h5>
                     <div class="row">
                         <div class="col-md-12">
@@ -235,12 +249,29 @@
 
                 <form method="post" class="mt-4" id="buForm">
                     {{ form_bu.csrf_token }}
+                    {% if form_bu.errors %}
+                    <div class="alert-message alert-error" role="alert" tabindex="-1" id="errosForm">
+                        <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                        <strong>Corrija os campos abaixo:</strong>
+                        <ul class="mb-0 ms-3">
+                            {% for campo, erros in form_bu.errors.items() %}
+                            {% if campo != 'csrf_token' %}
+                            {% for erro in erros %}
+                            <li>{{ campo }}: {{ erro }}</li>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% set desc_bu = {'aria-describedby': 'buEscolhido-erro'} if form_bu.bu_escolhido.errors else {} %}
 
                     <div class="mb-4">
                         {{ form_bu.bu_escolhido.label(class="form-label text-dark h5") }}
-                        {{ form_bu.bu_escolhido(class="form-select form-select-lg", id="buEscolhido") }}
+                        {{ form_bu.bu_escolhido(class="form-select form-select-lg", id="buEscolhido", **desc_bu) }}
                         {% if form_bu.bu_escolhido.errors %}
-                        <div class="text-danger">
+                        <div class="text-danger" id="buEscolhido-erro" role="alert">
                             {% for error in form_bu.bu_escolhido.errors %}
                             <small>{{ error }}</small>
                             {% endfor %}
@@ -270,7 +301,7 @@
                             <select name="produtos" id="produtosHidden" multiple class="d-none">
                                 <!-- Será preenchido via JavaScript -->
                             </select>
-                            <div id="produtosError" class="text-danger d-none">
+                            <div id="produtosError" class="text-danger d-none" role="alert">
                                 <small>Por favor, selecione pelo menos um produto</small>
                             </div>
                         </div>
@@ -299,6 +330,21 @@
 
                 <form method="post" class="mt-4">
                     {{ form_indicacao.csrf_token }}
+                    {% if form_indicacao.errors %}
+                    <div class="alert-message alert-error" role="alert" tabindex="-1" id="errosForm">
+                        <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                        <strong>Corrija os campos abaixo:</strong>
+                        <ul class="mb-0 ms-3">
+                            {% for campo, erros in form_indicacao.errors.items() %}
+                            {% if campo != 'csrf_token' %}
+                            {% for erro in erros %}
+                            <li>{{ campo }}: {{ erro }}</li>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
 
                     <div class="row">
                         <div class="col-md-6">
