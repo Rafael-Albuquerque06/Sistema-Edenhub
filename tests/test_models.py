@@ -39,6 +39,31 @@ def test_criar_empresa(app, empresa):
         assert e.responsavel_id is not None
 
 
+def test_set_senha_gera_str_bcrypt(app):
+    """set_senha deve gravar hash str de 60 chars (bytes quebram Postgres)."""
+    with app.app_context():
+        from app.models import Usuario
+        u = Usuario(nome='Hash Teste', email='hash@exemplo.com', telefone='11888887777')
+        u.set_senha('senha123')
+        assert isinstance(u.senha_hash, str)
+        assert len(u.senha_hash) == 60
+        assert u.senha_hash.startswith('$2b$')
+        assert u.check_senha('senha123') is True
+
+
+def test_check_senha_hash_invalido_retorna_false(app):
+    """Hash legado/corrompido deve virar 'senha incorreta', nao 500."""
+    with app.app_context():
+        from app.models import Usuario
+        u = Usuario(nome='Corrompido', email='corrompido@exemplo.com', telefone='11555555555')
+        u.set_senha('senha123')
+        u.senha_hash = 'x' * 60  # formato invalido para bcrypt
+        assert u.check_senha('x') is False
+        # repr de bytes gravado no varchar (bug do fluxo legado em Postgres)
+        u.senha_hash = "\\x24326224" + "0" * 114
+        assert u.check_senha('x') is False
+
+
 def test_bus_list_propriedade(app, empresa):
     """A propriedade bus_list deve retornar a lista de BUs vinculados (N:N)."""
     with app.app_context():

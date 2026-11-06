@@ -16,11 +16,23 @@ class Usuario(db.Model, UserMixin):
     senha_hash = db.Column(db.String(200), nullable=False)
 
     def set_senha(self, senha):
-        """Define a senha usando bcrypt para criptografar."""
-        self.senha_hash = bcrypt.generate_password_hash(senha.encode('utf-8'))
+        """Define a senha usando bcrypt para criptografar.
+
+        generate_password_hash pode retornar bytes; em Postgres os bytes
+        viram um dump hex (`\\x...`) no varchar e o login falha com
+        "Invalid salt". Sempre convertemos para str.
+        """
+        hash_gerado = bcrypt.generate_password_hash(senha.encode('utf-8'))
+        if isinstance(hash_gerado, bytes):
+            hash_gerado = hash_gerado.decode('ascii')
+        self.senha_hash = hash_gerado
 
     def check_senha(self, senha):
-        return bcrypt.check_password_hash(self.senha_hash, senha.encode('utf-8'))
+        try:
+            return bcrypt.check_password_hash(self.senha_hash, senha.encode('utf-8'))
+        except (ValueError, TypeError):
+            # Hash legado/corrompido: trata como senha incorreta (sem 500)
+            return False
 
 
 
