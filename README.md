@@ -2,7 +2,7 @@
 
 Sistema completo para gestão de cross-selling e comunicação interna, desenvolvido para otimizar processos comerciais e facilitar a colaboração entre equipes.
 
-**Acesse online:** https://sistema-edenhub-rafael.onrender.com
+**Acesse online:** https://sistema-edenhub.onrender.com
 
 ## 🚀 Funcionalidades Principais
 
