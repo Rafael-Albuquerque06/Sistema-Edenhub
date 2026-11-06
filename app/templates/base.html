@@ -78,20 +78,20 @@
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <div class="me-3 text-white">
-                        <small class="d-block opacity-75">Bem vindo</small>
-                        <strong>{{ current_user.nome.split(' ')[0] }}</strong>
+                    <div class="me-3">
+                        <small class="d-block text-muted">Bem vindo</small>
+                        <strong class="text-dark">{{ current_user.nome.split(' ')[0] }}</strong>
                     </div>
                     <img src="{{ url_for('static', filename='data/img_user/' ~ current_user.foto) }}"
                         class="avatar me-3"
                         alt="Foto de perfil de {{ current_user.nome }}">
-                    <a class="btn btn-outline-light btn-sm" href="{{ url_for('main.logout') }}">
+                    <a class="btn btn-outline-edenred btn-sm" href="{{ url_for('main.logout') }}">
                         <i class="bi bi-box-arrow-right"></i> Sair
                     </a>
                 </div>
                 {% else %}
                 <div class="d-flex gap-2">
-                    <a href="{{ url_for('main.login') }}" class="btn btn-outline-light btn-sm">Entrar</a>
+                    <a href="{{ url_for('main.login') }}" class="btn btn-outline-edenred btn-sm">Entrar</a>
                     <a href="{{ url_for('main.cadastro') }}" class="btn btn-edenred btn-sm">Cadastrar-se</a>
                 </div>
                 {% endif %}
