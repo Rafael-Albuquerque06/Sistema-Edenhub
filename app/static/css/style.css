@@ -87,6 +87,44 @@ p { margin-bottom: var(--space-2); }
   outline-offset: 2px;
 }
 
+/* --- Clique: cursor correto em HTML5 (guidelines ui-ux-pro-max) --- */
+a, button, [role="button"], select, summary,
+input[type="submit"], input[type="button"], input[type="checkbox"], input[type="radio"] {
+  cursor: pointer;
+}
+
+button:disabled, a.btn-loading {
+  cursor: not-allowed;
+}
+
+/* --- Alvos de toque >=44px em mobile (WCAG 2.5.8 / Apple HIG) --- */
+@media (max-width: 768px) {
+  .btn,
+  .nav-link,
+  .navbar-toggler {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .btn-group-vertical .btn + .btn {
+    margin-top: 0;
+  }
+}
+
+/* --- Movimento reduzido (prefers-reduced-motion) --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skip-link {
+    transition: none;
+  }
+}
+
 /* Skip link para acessibilidade */
 .skip-link {
   position: absolute;
@@ -145,8 +183,12 @@ p { margin-bottom: var(--space-2); }
 }
 
 .card-edenred:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-md);
+}
+
+/* Elevação só em cards realmente interativos (affordance de clique) */
+.funcionalidade-card:hover {
+  transform: translateY(-4px);
 }
 
 .card-header-edenred {
@@ -265,9 +307,9 @@ p { margin-bottom: var(--space-2); }
 }
 
 .alert-message.alert-success {
-  background-color: #E3F2FD;
-  color: #1565C0;
-  border-left: 4px solid #2196F3;
+  background-color: #E6F4EA;
+  color: #188038;
+  border-left: 4px solid #188038;
 }
 
 .alert-message.alert-error,

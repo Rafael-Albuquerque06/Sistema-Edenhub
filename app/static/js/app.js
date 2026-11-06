@@ -72,6 +72,12 @@
         });
     });
 
+    // ---------- RESUMO DE ERROS DO FORMULÁRIO (foco pós-submit) ----------
+    // Forms com {% if form.errors %} renderizam #errosForm (role="alert");
+    // ao voltar da validação no servidor, o foco vai para o resumo.
+    const resumoErros = document.getElementById('errosForm');
+    if (resumoErros) { resumoErros.focus(); }
+
     // ---------- ALERTA AUTO-FECHÁVEL (estilo toast) ----------
     document.querySelectorAll('.alert-message').forEach(function (alerta) {
         alerta.setAttribute('aria-live', 'polite');
