@@ -16,7 +16,8 @@ COPY . .
 
 # Variáveis de ambiente com valores padrão
 ENV SECRET_KEY=dev-secret-key-change-in-production
-ENV DATABASE_URI=sqlite:///instance/edenred.db
+# Caminho relativo ao instance_path (Flask-SQLAlchemy): /app/instance/edenred.db
+ENV DATABASE_URI=sqlite:///edenred.db
 ENV FLASK_APP=main.py
 ENV FLASK_ENV=production
 
@@ -24,4 +25,5 @@ ENV FLASK_ENV=production
 EXPOSE 5000
 
 # Comando para iniciar a aplicação com gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "wsgi:app"]
+# 1 worker com threads: SocketIO (chat em tempo real) exige processo único
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "8", "--worker-class", "gthread", "wsgi:app"]

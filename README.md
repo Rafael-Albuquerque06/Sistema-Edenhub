@@ -14,20 +14,26 @@ Sistema completo para gestão de cross-selling e comunicação interna, desenvol
 - **Prevenção de duplicidades** automática
 
 ### 💬 Sistema de Comunicação
-- **Chat interno** entre usuários
-- **Histórico completo** de conversas
+- **Chat interno em tempo real** (Flask-SocketIO) com indicador "digitando..." e status online/offline
+- **Histórico completo** de conversas com contador de não lidas
 - **Interface intuitiva** e responsiva
 
 ### 📊 Gestão de Dados
 - **Consulta de clientes** com filtros
-- **Dashboard de pendências**
+- **Dashboard com métricas reais** (indicações, pendências, clientes)
 - **Portfólio de produtos** organizado
+
+### 🔍 Validação e Integrações
+- **Validação de CNPJ** com dígitos verificadores (antes do cadastro)
+- **Prefill via ReceitaWS**: dados cadastrais preenchidos automaticamente por CNPJ (fallback manual)
+- **Endereço via ViaCEP**: forma do CEP com máscara + preenchimento automático (fallback manual)
+- **Máscaras de entrada** para CNPJ, telefone e CEP
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend:** Python + Flask
-- **Frontend:** HTML5 + Bootstrap 5 + JavaScript
-- **Banco de Dados:** SQLAlchemy + SQLite
+- **Backend:** Python + Flask + Flask-SocketIO (chat em tempo real)
+- **Frontend:** HTML5 + Bootstrap 5 + JavaScript (máscaras e validação client-side)
+- **Banco de Dados:** SQLAlchemy + SQLite (PostgreSQL em produção)
 - **Autenticação:** Flask-Login + Bcrypt
 - **Forms:** Flask-WTF + WTForms
 - **Migrações:** Flask-Migrate (Alembic)
@@ -116,27 +122,43 @@ docker run -p 5000:5000 edenhub
 ```
 edenhub/
 ├── app/
-│   ├── __init__.py          # Application factory
-│   ├── models.py            # Modelos do banco de dados
-│   ├── services.py          # Lógica de negócio
+│   ├── __init__.py          # Application factory (cria app + SocketIO por instância)
+│   ├── config.py            # Config por ambiente (development/production/testing)
+│   ├── models.py            # Modelos (N:N: BusinessUnit, Produto + associações)
+│   ├── services.py          # Lógica de negócio (usuários, empresas, chat, métricas)
+│   ├── routes.py            # Rotas (apenas request/response)
 │   ├── forms.py             # Formulários e validações
-│   ├── routes.py            # Rotas da aplicação
+│   ├── utils.py             # Helpers puros: CNPJ (validar/formatar), máscaras, datas
+│   ├── api_client.py        # Integrações externas: ViaCEP e ReceitaWS (fallback manual)
+│   ├── events.py            # Eventos SocketIO do chat (mensagens, digitando, presença)
+│   ├── presence.py          # Presença online/offline em memória (threading)
 │   ├── static/
 │   │   ├── css/style.css    # Design system
-│   │   ├── js/script.js     # Interatividade
+│   │   ├── js/app.js        # Máscaras, ViaCEP, toasts e feedback de envio
+│   │   ├── js/script.js     # Catálogo dinâmico de produtos no cross-selling
 │   │   ├── data/            # Uploads
 │   │   └── img/             # Imagens
 │   └── templates/           # Templates HTML
 ├── migrations/              # Migrações Alembic
-├── tests/                   # Testes pytest
-├── main.py                  # Arquivo principal
-├── wsgi.py                  # Entry point para WSGI
+├── tests/                   # Testes pytest (modelos, rotas, serviços, APIs, chat)
+├── main.py                  # Servidor de desenvolvimento (socketio.run)
+├── wsgi.py                  # Entry point para gunicorn
 ├── sk_create.py             # Gerador de chave secreta
 ├── requirements.txt         # Dependências
 ├── .env.example             # Exemplo de variáveis de ambiente
 ├── .gitignore               # Arquivos ignorados
 └── README.md
 ```
+
+## 🚀 Deploy (gunicorn)
+
+O chat em tempo real exige um único processo do gunicorn:
+
+```bash
+gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --worker-class gthread wsgi:app
+```
+
+No Render (render.yaml): `flask db upgrade` roda antes do start, e a `DATABASE_URI` não vem versionada (configure no dashboard).
 
 ## 🔒 Segurança
 

@@ -3,12 +3,12 @@ services:
     name: sistema-edenhub
     env: python
     buildCommand: "pip install -r requirements.txt && flask db upgrade"
-    startCommand: "flask db upgrade && gunicorn --bind 0.0.0.0:$PORT wsgi:app"
+    startCommand: "flask db upgrade && gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --worker-class gthread wsgi:app"
     envVars:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URI
-        value: postgresql://edenhub:FIYhPqC1qhAKc8h4b9rJ5qBA4GvSCQav@dpg-dblu320u01pc73foou60-a/edenhub
+        sync: false  # configure no dashboard do Render (não versionar credenciais)
       - key: FLASK_APP
         value: main.py
       - key: FLASK_ENV
