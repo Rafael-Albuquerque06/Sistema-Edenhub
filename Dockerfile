@@ -25,5 +25,6 @@ ENV FLASK_ENV=production
 EXPOSE 5000
 
 # Comando para iniciar a aplicação com gunicorn
-# 1 worker com threads: SocketIO (chat em tempo real) exige processo único
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "8", "--worker-class", "gthread", "wsgi:app"]
+# 1 worker com threads: SocketIO (chat em tempo real) exige processo único.
+# Roda as migrações antes; "exec" mantém o gunicorn como PID 1 (SIGTERM ok).
+CMD ["sh", "-c", "python run_migrations.py && exec gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 1 --threads 8 --worker-class gthread wsgi:app"]

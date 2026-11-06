@@ -8,10 +8,12 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 import pytz
 
-from app.config import get_config
-from app.utils import formatar_data_brasil
+# Deve preceder o import de app.config: a resolução de DATABASE_URI/SECRET_KEY
+# acontece na definição das classes, antes de create_app() (noqa: E402)
+load_dotenv('.env')  # noqa: E402
 
-load_dotenv('.env')
+from app.config import get_config  # noqa: E402
+from app.utils import formatar_data_brasil  # noqa: E402
 
 db = SQLAlchemy()
 migrate = Migrate()
