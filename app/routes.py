@@ -54,7 +54,7 @@ def login():
     if form.validate_on_submit():
         usuario = autenticar_usuario(form.usuario_login.data, form.senha.data)
         if usuario:
-            login_user(usuario)
+            login_user(usuario, remember=form.lembrar.data)
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('main.home'))
         flash('Login ou senha incorretos!', 'error')

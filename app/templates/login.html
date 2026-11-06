@@ -2,12 +2,53 @@
 
 {% block title %}Entrar - Edenhub{% endblock %}
 
+{% block navbar %}
+<!-- Topo mínimo nas telas de auth (sem CTA duplicado) -->
+<header class="py-3 bg-white border-bottom" aria-label="Cabeçalho do login">
+    <div class="container d-flex justify-content-center justify-content-sm-between align-items-center">
+        <a class="navbar-brand p-0" href="{{ url_for('main.index') }}">
+            <i class="bi bi-building-gear text-edenred me-2" aria-hidden="true"></i>
+            <span class="text-dark">Edenhub</span>
+        </a>
+        <a href="{{ url_for('main.index') }}" class="small text-muted d-none d-sm-inline">
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Voltar ao início
+        </a>
+    </div>
+</header>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card card-edenred">
+<div class="auth-wrap">
+
+    <!-- PAINEL DA MARCA -->
+    <aside class="auth-brand d-none d-lg-flex" aria-label="Sobre o Edenhub">
+        <div>
+            <i class="bi bi-building-gear display-4" aria-hidden="true"></i>
+            <h1 class="h2 mt-2 mb-2">Edenhub</h1>
+            <p class="lead">Gestão de cross-selling e comunicação interna em um só lugar.</p>
+        </div>
+        <ul class="list-unstyled mb-0 auth-brand-proof">
+            <li class="proof-item justify-content-start mb-2">
+                <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Onboarding em minutos
+            </li>
+            <li class="proof-item justify-content-start mb-2">
+                <i class="bi bi-chat-heart" aria-hidden="true"></i> Chat em tempo real
+            </li>
+            <li class="proof-item justify-content-start">
+                <i class="bi bi-database-check" aria-hidden="true"></i> Base única de clientes
+            </li>
+        </ul>
+    </aside>
+
+    <!-- FORMULÁRIO -->
+    <main id="content">
+        <div class="card card-edenred auth-card mb-0">
             <div class="card-body">
-                <h3 class="card-title text-center mb-4 text-dark">Entrar</h3>
+                <div class="text-center mb-4 d-lg-none">
+                    <i class="bi bi-building-gear text-edenred display-5" aria-hidden="true"></i>
+                </div>
+                <h2 class="h3 text-center mb-1">Entrar</h2>
+                <p class="text-center text-muted mb-4">Acesse com seu email, telefone ou Skype</p>
 
                 <form method="post" novalidate>
                     {{ form.csrf_token }}
@@ -19,7 +60,7 @@
                             {% for campo, erros in form.errors.items() %}
                             {% if campo != 'csrf_token' %}
                             {% for erro in erros %}
-                            <li>{{ campo }}: {{ erro }}</li>
+                            <li>{{ form[campo].label.text }}: {{ erro }}</li>
                             {% endfor %}
                             {% endif %}
                             {% endfor %}
@@ -30,12 +71,15 @@
                     {% set desc_login = {'aria-describedby': 'usuario_login-erro'} if form.usuario_login.errors else {} %}
                     {% set desc_senha = {'aria-describedby': 'senha-erro'} if form.senha.errors else {} %}
 
-                    <div class="mb-3">
-                        {{ form.usuario_login.label(class="form-label text-dark") }}
-                        {{ form.usuario_login(class="form-control form-control-custom",
-                        placeholder="Email, telefone ou Skype", autocomplete="username", **desc_login) }}
+                    <div class="mb-3 auth-form">
+                        {{ form.usuario_login.label(class="form-label") }}
+                        <div class="auth-input-group">
+                            <i class="bi bi-person auth-input-icon" aria-hidden="true"></i>
+                            {{ form.usuario_login(class="form-control form-control-custom",
+                            placeholder="Email, telefone ou Skype", autocomplete="username", **desc_login) }}
+                        </div>
                         {% if form.usuario_login.errors %}
-                            <div class="text-danger" id="usuario_login-erro" role="alert">
+                            <div class="text-danger mt-1" id="usuario_login-erro" role="alert">
                                 {% for error in form.usuario_login.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
@@ -43,29 +87,69 @@
                         {% endif %}
                     </div>
 
-                    <div class="mb-3">
-                        {{ form.senha.label(class="form-label text-dark") }}
-                        {{ form.senha(class="form-control form-control-custom",
-                        placeholder="Senha", autocomplete="current-password", **desc_senha) }}
-                        {% if form.senha.errors %}
-                            <div class="text-danger" id="senha-erro" role="alert">
+                    <div class="mb-3 auth-form">
+                        {{ form.senha.label(class="form-label") }}
+                        <div class="auth-input-group">
+                            <i class="bi bi-key auth-input-icon" aria-hidden="true"></i>
+                            {{ form.senha(class="form-control form-control-custom",
+                            placeholder="Sua senha", autocomplete="current-password", **desc_senha) }}
+                            <button type="button" class="auth-toggle-senha" id="toggleSenha"
+                                aria-pressed="false"
+                                aria-label="Mostrar senha">
+                                <i class="bi bi-eye" id="iconeSenha" aria-hidden="true"></i>
+                            </button>
+                            {% if form.senha.errors %}
+                            <div class="text-danger w-100 mt-1" id="senha-erro" role="alert">
                                 {% for error in form.senha.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
                             </div>
-                        {% endif %}
+                            {% endif %}
+                        </div>
                     </div>
 
-                    <div class="d-grid">
-                        {{ form.btnSubmit(class="btn btn-edenred btn-lg") }}
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check mb-0">
+                            {{ form.lembrar(class="form-check-input") }}
+                            {{ form.lembrar.label(class="form-check-label text-muted") }}
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-shield-lock me-1" aria-hidden="true"></i>Conexão segura
+                        </small>
+                    </div>
+
+                    <div class="d-grid auth-form">
+                        {{ form.btnSubmit(class="btn btn-edenred btn-lg fw-semibold") }}
                     </div>
                 </form>
 
-                <div class="text-center mt-3">
-                    <a href="{{ url_for('main.cadastro') }}" class="text-muted">Não tem conta? Cadastre-se</a>
-                </div>
+                <p class="text-center mb-0 mt-4">
+                    <a href="{{ url_for('main.cadastro') }}" class="auth-alt-link text-edenred">
+                        Não tem conta? <strong>Cadastre-se</strong>
+                    </a>
+                </p>
             </div>
         </div>
-    </div>
+    </main>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Mostrar/ocultar senha (acessível: aria-pressed + label alternando)
+    document.addEventListener('DOMContentLoaded', function () {
+        var botao = document.getElementById('toggleSenha');
+        if (!botao) { return; }
+        var campo = document.getElementById('senha');
+        var icone = document.getElementById('iconeSenha');
+        botao.addEventListener('click', function () {
+            var mostrar = campo.type === 'password';
+            campo.type = mostrar ? 'text' : 'password';
+            botao.setAttribute('aria-pressed', String(mostrar));
+            botao.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+            icone.classList.toggle('bi-eye', !mostrar);
+            icone.classList.toggle('bi-eye-slash', mostrar);
+        });
+    });
+</script>
 {% endblock %}

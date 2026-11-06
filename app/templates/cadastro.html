@@ -2,16 +2,52 @@
 
 {% block title %}Cadastrar - Edenhub{% endblock %}
 
+{% block navbar %}
+<!-- Topo mínimo nas telas de auth -->
+<header class="py-3 bg-white border-bottom" aria-label="Cabeçalho do cadastro">
+    <div class="container d-flex justify-content-center justify-content-sm-between align-items-center">
+        <a class="navbar-brand p-0" href="{{ url_for('main.index') }}">
+            <i class="bi bi-building-gear text-edenred me-2" aria-hidden="true"></i>
+            <span class="text-dark">Edenhub</span>
+        </a>
+        <a href="{{ url_for('main.index') }}" class="small text-muted d-none d-sm-inline">
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Voltar ao início
+        </a>
+    </div>
+</header>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card card-edenred">
+<div class="auth-wrap">
+
+    <!-- PAINEL DA MARCA -->
+    <aside class="auth-brand d-none d-lg-flex" aria-label="Sobre o Edenhub">
+        <div>
+            <i class="bi bi-building-gear display-4" aria-hidden="true"></i>
+            <h1 class="h2 mt-2 mb-2">Edenhub</h1>
+            <p class="lead">Crie sua conta e comece a indicar soluções Edenred.</p>
+        </div>
+        <ul class="list-unstyled mb-0 auth-brand-proof">
+            <li class="proof-item justify-content-start mb-2">
+                <i class="bi bi-person-plus" aria-hidden="true"></i> Cadastro em minutos
+            </li>
+            <li class="proof-item justify-content-start mb-2">
+                <i class="bi bi-shield-check" aria-hidden="true"></i> Seus dados protegidos
+            </li>
+        </ul>
+    </aside>
+
+    <!-- FORMULÁRIO -->
+    <main id="content">
+        <div class="card card-edenred auth-card mb-0">
             <div class="card-body">
-                <h3 class="card-title text-center mb-4 text-dark">Cadastrar Usuário</h3>
+                <div class="text-center mb-4 d-lg-none">
+                    <i class="bi bi-building-gear text-edenred display-5" aria-hidden="true"></i>
+                </div>
+                <h2 class="h3 text-center mb-1">Cadastrar Usuário</h2>
+                <p class="text-center text-muted mb-4">( * ) Dado obrigatório</p>
 
-                <p class="text-center">( * ) Dado obrigatório.</p>
-
-                <form method="post" enctype="multipart/form-data" novalidate>
+                <form method="post" enctype="multipart/form-data" novalidate class="auth-form">
                     {{ form.csrf_token }}
                     {% if form.errors %}
                     <div class="alert-message alert-error" role="alert" tabindex="-1" id="errosForm">
@@ -30,10 +66,10 @@
                     {% endif %}
 
                     <div class="mb-3">
-                        {{ form.foto.label(class="form-label text-dark") }}
+                        {{ form.foto.label(class="form-label") }}
                         {{ form.foto(class="form-control form-control-custom", placeholder="Sua foto aqui (opcional)") }}
                         {% if form.foto.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger mt-1" role="alert">
                                 {% for error in form.foto.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
@@ -42,10 +78,10 @@
                     </div>
 
                     <div class="mb-3">
-                        {{ form.nome.label(class="form-label text-dark") }}
-                        {{ form.nome(class="form-control form-control-custom", placeholder="Seu nome completo") }}
+                        {{ form.nome.label(class="form-label") }}
+                        {{ form.nome(class="form-control form-control-custom", placeholder="Seu nome completo", autocomplete="name") }}
                         {% if form.nome.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger mt-1" role="alert">
                                 {% for error in form.nome.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
@@ -54,11 +90,14 @@
                     </div>
 
                     <div class="mb-3">
-                        {{ form.email.label(class="form-label text-dark") }}
-                        {{ form.email(class="form-control form-control-custom", placeholder="seu@email.com",
-                        autocomplete="email", type="email") }}
+                        {{ form.email.label(class="form-label") }}
+                        <div class="auth-input-group">
+                            <i class="bi bi-envelope auth-input-icon" aria-hidden="true"></i>
+                            {{ form.email(class="form-control form-control-custom", placeholder="seu@email.com",
+                            autocomplete="email", type="email") }}
+                        </div>
                         {% if form.email.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger mt-1" role="alert">
                                 {% for error in form.email.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
@@ -66,13 +105,13 @@
                         {% endif %}
                     </div>
 
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6 mb-3">
-                            {{ form.telefone.label(class="form-label text-dark") }}
+                            {{ form.telefone.label(class="form-label") }}
                             {{ form.telefone(class="form-control form-control-custom", placeholder="(11) 99999-9999",
                             autocomplete="tel", inputmode="tel", type="tel") }}
                             {% if form.telefone.errors %}
-                                <div class="text-danger">
+                                <div class="text-danger mt-1" role="alert">
                                     {% for error in form.telefone.errors %}
                                         <small>{{ error }}</small>
                                     {% endfor %}
@@ -80,10 +119,10 @@
                             {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
-                            {{ form.skype.label(class="form-label text-dark") }}
+                            {{ form.skype.label(class="form-label") }}
                             {{ form.skype(class="form-control form-control-custom", placeholder="Seu Skype (opcional)") }}
                             {% if form.skype.errors %}
-                                <div class="text-danger">
+                                <div class="text-danger mt-1" role="alert">
                                     {% for error in form.skype.errors %}
                                         <small>{{ error }}</small>
                                     {% endfor %}
@@ -93,11 +132,18 @@
                     </div>
 
                     <div class="mb-3">
-                        {{ form.senha.label(class="form-label text-dark") }}
-                        {{ form.senha(class="form-control form-control-custom", placeholder="Mínimo 6 caracteres",
-                        autocomplete="new-password") }}
+                        {{ form.senha.label(class="form-label") }}
+                        <div class="auth-input-group">
+                            <i class="bi bi-key auth-input-icon" aria-hidden="true"></i>
+                            {{ form.senha(class="form-control form-control-custom", placeholder="Mínimo 6 caracteres",
+                            autocomplete="new-password") }}
+                            <button type="button" class="auth-toggle-senha js-toggle-senha"
+                                aria-pressed="false" aria-label="Mostrar senha">
+                                <i class="bi bi-eye icone-senha" aria-hidden="true"></i>
+                            </button>
+                        </div>
                         {% if form.senha.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger mt-1" role="alert">
                                 {% for error in form.senha.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
@@ -105,12 +151,12 @@
                         {% endif %}
                     </div>
 
-                    <div class="mb-3">
-                        {{ form.confirmar_senha.label(class="form-label text-dark") }}
+                    <div class="mb-4">
+                        {{ form.confirmar_senha.label(class="form-label") }}
                         {{ form.confirmar_senha(class="form-control form-control-custom", placeholder="Digite a senha novamente",
                         autocomplete="new-password") }}
                         {% if form.confirmar_senha.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger mt-1" role="alert">
                                 {% for error in form.confirmar_senha.errors %}
                                     <small>{{ error }}</small>
                                 {% endfor %}
@@ -118,16 +164,38 @@
                         {% endif %}
                     </div>
 
-                    <div class="d-grid">
-                        {{ form.btnSubmit(class="btn btn-edenred btn-lg") }}
+                    <div class="d-grid auth-form">
+                        {{ form.btnSubmit(class="btn btn-edenred btn-lg fw-semibold") }}
                     </div>
                 </form>
 
-                <div class="text-center mt-3">
-                    <a href="{{ url_for('main.login') }}" class="text-muted">Já tem conta? Faça login</a>
-                </div>
+                <p class="text-center mb-0 mt-4">
+                    <a href="{{ url_for('main.login') }}" class="auth-alt-link text-edenred">
+                        Já tem conta? <strong>Faça login</strong>
+                    </a>
+                </p>
             </div>
         </div>
-    </div>
+    </main>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Mostrar/ocultar senha (classe genérica: funciona em qualquer toggle da página)
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.js-toggle-senha').forEach(function (botao) {
+            botao.addEventListener('click', function () {
+                var campo = botao.closest('.auth-input-group').querySelector('input');
+                var icone = botao.querySelector('.icone-senha');
+                var mostrar = campo.type === 'password';
+                campo.type = mostrar ? 'text' : 'password';
+                botao.setAttribute('aria-pressed', String(mostrar));
+                botao.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+                icone.classList.toggle('bi-eye', !mostrar);
+                icone.classList.toggle('bi-eye-slash', mostrar);
+            });
+        });
+    });
+</script>
 {% endblock %}

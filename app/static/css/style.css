@@ -584,7 +584,159 @@ button:disabled, a.btn-loading {
   background: var(--edenred-primary);
 }
 
+/* --- PÁGINAS DE AUTH (login/cadastro): split limpo --- */
+.auth-wrap {
+  min-height: calc(100dvh - 76px);
+  display: grid;
+  grid-template-columns: minmax(0, 42%) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: center;
+  padding: var(--space-3) 0 var(--space-4);
+}
+
+.auth-brand {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  color: white;
+  padding: 2.5rem;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(ellipse 60% 80% at 85% 15%, rgb(255 255 255 / 0.14), transparent 60%),
+    radial-gradient(ellipse 50% 70% at 10% 90%, rgb(178 34 34 / 0.55), transparent 65%),
+    linear-gradient(120deg, var(--edenred-dark) 0%, var(--edenred-primary) 50%, var(--edenred-secondary) 100%);
+  box-shadow: 0 24px 60px -24px rgb(90 0 0 / 0.55);
+}
+
+.auth-brand h1,
+.auth-brand h2 {
+  color: white;
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.auth-brand .lead {
+  color: rgb(255 255 255 / 0.88);
+  margin: 0;
+}
+
+.auth-brand .proof-item {
+  color: rgb(255 255 255 / 0.92);
+}
+
+.auth-brand .proof-item i {
+  color: white;
+}
+
+.auth-card {
+  max-width: 26rem;
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid rgb(15 23 42 / 0.06);
+  box-shadow: var(--shadow);
+}
+
+.auth-card .card-body {
+  padding: 2.25rem 2rem;
+}
+
+/* --- Inputs de auth com ícone interno + toggle de senha --- */
+.auth-input-group {
+  position: relative;
+}
+
+.auth-input-group i.auth-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.9rem;
+  transform: translateY(-50%);
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+}
+
+.auth-input-group .form-control-custom {
+  padding-left: 2.65rem;
+  min-height: 52px;
+  width: 100%;
+}
+
+.auth-toggle-senha {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-toggle-senha:hover {
+  color: var(--edenred-primary);
+}
+
+.auth-form .form-label {
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+.auth-form .btn-lg {
+  width: 100%;
+  min-height: 52px;
+  font-size: 1.05rem;
+}
+
+.form-check .form-check-input {
+  cursor: pointer;
+}
+
+.form-check .form-check-input:checked {
+  background-color: var(--edenred-primary);
+  border-color: var(--edenred-primary);
+}
+
+.form-check .form-check-input:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.auth-alt-link {
+  font-weight: 500;
+}
+
+/* Mobile: painel de marca vira banner compacto */
+@media (max-width: 991.98px) {
+  .auth-wrap {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding-top: 1rem;
+  }
+  .auth-brand {
+    padding: 1.5rem;
+    gap: 0.5rem;
+  }
+  .auth-brand .lead {
+    font-size: 0.95rem;
+  }
+  .auth-brand .auth-brand-proof {
+    display: none;
+  }
+  .auth-card .card-body {
+    padding: 1.5rem;
+  }
+}
+
 /* --- Portfolio: imagens responsivas e CTAs --- */
+
 .portfolio-img {
   width: 100%;
   max-width: 100%;

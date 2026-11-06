@@ -23,7 +23,8 @@
     <!-- Skip link para acessibilidade -->
     <a href="#content" class="skip-link">Pular para o conteúdo principal</a>
 
-    <!-- NAVBAR (única, definida aqui) -->
+    {% block navbar %}
+    <!-- NAVBAR padrão (páginas por padrão) -->
     <nav class="navbar navbar-expand-lg navbar-edenred" aria-label="Navegação principal">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.home') }}">
@@ -97,6 +98,7 @@
             </div>
         </div>
     </nav>
+    {% endblock %}
 
     <!-- CONTAINER PRINCIPAL -->
     <div class="container py-4" id="content">

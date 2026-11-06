@@ -16,7 +16,8 @@ from app.models import Usuario, Empresa, Indicacao, Mensagem
 class LoginForm(FlaskForm):
     usuario_login = StringField('Email, telefone ou Skype', validators=[DataRequired()])
     senha = PasswordField('Senha', validators=[DataRequired()])
-    btnSubmit = SubmitField('Avançar')
+    lembrar = BooleanField('Manter conectado', validators=[Optional()])
+    btnSubmit = SubmitField('Entrar')
 
 
 class CadastroUsuarioForm(FlaskForm):
