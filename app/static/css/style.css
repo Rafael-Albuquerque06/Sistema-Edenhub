@@ -777,13 +777,6 @@ html {
   margin-bottom: 0.5rem;
 }
 
-/* --- CTA final (clean: fundo claro, borda sutil, vermelho como acento) --- */
-.landing-cta {
-  background: var(--edenred-light);
-  border: 1px solid rgb(139 0 0 / 0.12);
-  border-radius: 1.35rem;
-}
-
 /* --- Portfolio: imagens responsivas e CTAs --- */
 
 .portfolio-img {

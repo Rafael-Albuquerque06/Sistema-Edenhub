@@ -111,16 +111,4 @@
     </div>
 </section>
 
-<!-- CTA FINAL -->
-<section class="landing-cta text-center p-5 mb-5" aria-label="Comece agora">
-    <p class="eyebrow eyebrow-red mb-2">Pronto para começar?</p>
-    <h2 class="h3 fw-bold mb-3">Transforme indicações em contratações</h2>
-    {% if current_user.is_authenticated %}
-    <a href="{{ url_for('main.home') }}" class="btn btn-edenred fw-semibold">Acessar o sistema</a>
-    {% else %}
-    <a href="{{ url_for('main.cadastro') }}" class="btn btn-edenred fw-semibold">
-        <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Cadastrar-se agora
-    </a>
-    {% endif %}
-</section>
 {% endblock %}
