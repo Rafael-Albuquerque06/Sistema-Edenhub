@@ -735,9 +735,9 @@ button:disabled, a.btn-loading {
   }
 }
 
-/* --- HERO da landing (gradiente Edenred) --- */
+/* --- HERO da landing (clean branco: tipografia + respiro, sem gradiente) --- */
 .landing-hero {
-  padding-top: 4.5rem;
+  padding-top: 5rem;
   padding-bottom: 4.5rem;
 }
 
@@ -758,7 +758,6 @@ html {
   margin: 0;
 }
 
-.eyebrow-light { color: rgb(255 255 255 / 0.78); }
 .eyebrow-red { color: var(--edenred-primary); }
 
 /* --- Como funciona (números ghosts) --- */
@@ -772,13 +771,11 @@ html {
   margin-bottom: 0.5rem;
 }
 
-/* --- CTA final em faixa --- */
+/* --- CTA final (clean: fundo claro, borda sutil, vermelho como acento) --- */
 .landing-cta {
-  background:
-    radial-gradient(ellipse 60% 80% at 15% 15%, rgb(255 255 255 / 0.12), transparent 60%),
-    linear-gradient(120deg, var(--edenred-dark) 0%, var(--edenred-primary) 50%, var(--edenred-secondary) 100%);
+  background: var(--edenred-light);
+  border: 1px solid rgb(139 0 0 / 0.12);
   border-radius: 1.35rem;
-  box-shadow: 0 24px 60px -24px rgb(90 0 0 / 0.55);
 }
 
 /* --- Portfolio: imagens responsivas e CTAs --- */
@@ -798,32 +795,6 @@ html {
     width: 100%;
     min-height: 44px;
   }
-}
-
-/* --- HERO da landing (gradiente Edenred) --- */
-.hero-edenred {
-  background:
-    radial-gradient(ellipse 60% 80% at 85% 15%, rgb(255 255 255 / 0.14), transparent 60%),
-    radial-gradient(ellipse 50% 70% at 10% 90%, rgb(178 34 34 / 0.55), transparent 65%),
-    linear-gradient(120deg, var(--edenred-dark) 0%, var(--edenred-primary) 50%, var(--edenred-secondary) 100%);
-  border-radius: 1.35rem;
-  box-shadow: 0 24px 60px -24px rgb(90 0 0 / 0.55);
-  margin-bottom: var(--space-4);
-  overflow: hidden;
-  position: relative;
-}
-
-.hero-edenred .display-3 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-.hero-edenred .lead {
-  color: rgb(255 255 255 / 0.88);
-  max-width: 46rem;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /* --- Faixa de prova (landing) --- */
@@ -947,7 +918,6 @@ html {
   }
   h1 { font-size: 2rem; }
   h2 { font-size: 1.6rem; }
-  .hero-edenred .display-3 { font-size: 2.5rem; }
   .landing-hero { padding-top: 3rem; padding-bottom: 3rem; }
   .card-edenred > .card-body { padding: 1.25rem; }
   .card-header-edenred { padding: 1.1rem 1.25rem; }

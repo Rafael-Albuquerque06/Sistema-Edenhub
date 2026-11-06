@@ -3,34 +3,34 @@
 {% block title %}Edenhub - Gestão de Cross-Selling{% endblock %}
 
 {% block content %}
-<!-- HERO (centrado minimalista) -->
-<div class="hero-edenred landing-hero text-white text-center py-5 px-4">
-    <div class="py-lg-4">
-        <p class="eyebrow eyebrow-light mb-3">Gestão de cross-selling · Comunicação interna</p>
-        <h1 class="display-3 mb-3">Edenhub</h1>
-        <p class="lead mx-auto mb-4">
+<!-- HERO (clean minimalista: branco, tipografia, um acento) -->
+<section class="landing-hero px-4 px-lg-5" aria-label="Apresentação do Edenhub">
+    <div class="text-center mx-auto">
+        <p class="eyebrow eyebrow-red mb-3">Gestão de cross-selling · Comunicação interna</p>
+        <h1 class="display-3 fw-bold mb-3">Edenhub</h1>
+        <p class="lead mx-auto mb-4 text-muted">
             O caminho simples entre as unidades de negócio Edenred
             e as necessidades dos seus clientes.
         </p>
         <div class="d-flex justify-content-center flex-wrap gap-3">
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('main.home') }}" class="btn btn-light btn-lg fw-semibold">
+            <a href="{{ url_for('main.home') }}" class="btn btn-edenred btn-lg fw-semibold">
                 <i class="bi bi-arrow-right-circle me-2" aria-hidden="true"></i>Ir para o Sistema
             </a>
             {% else %}
-            <a href="{{ url_for('main.login') }}" class="btn btn-light btn-lg fw-semibold">
+            <a href="{{ url_for('main.login') }}" class="btn btn-edenred btn-lg fw-semibold">
                 <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Entrar
             </a>
-            <a href="{{ url_for('main.cadastro') }}" class="btn btn-outline-light btn-lg">Cadastrar-se</a>
+            <a href="{{ url_for('main.cadastro') }}" class="btn btn-outline-edenred btn-lg">Cadastrar-se</a>
             {% endif %}
         </div>
         {% if not current_user.is_authenticated %}
-        <a href="#funcionalidades" class="d-inline-block mt-4 small text-white-50">
+        <a href="#funcionalidades" class="d-inline-block mt-4 small text-muted">
             <i class="bi bi-arrow-down me-1" aria-hidden="true"></i>Conhecer as funcionalidades
         </a>
         {% endif %}
     </div>
-</div>
+</section>
 
 <!-- FAIXA DE PROVA -->
 <section class="row justify-content-center mb-5" aria-label="Diferenciais do Edenhub">
@@ -112,13 +112,13 @@
 </section>
 
 <!-- CTA FINAL -->
-<section class="landing-cta text-white text-center py-5 px-4 mb-5" aria-label="Comece agora">
-    <p class="eyebrow eyebrow-light mb-2">Pronto para começar?</p>
+<section class="landing-cta text-center p-5 mb-5" aria-label="Comece agora">
+    <p class="eyebrow eyebrow-red mb-2">Pronto para começar?</p>
     <h2 class="h3 fw-bold mb-3">Transforme indicações em contratações</h2>
     {% if current_user.is_authenticated %}
-    <a href="{{ url_for('main.home') }}" class="btn btn-light btn-lg fw-semibold">Acessar o sistema</a>
+    <a href="{{ url_for('main.home') }}" class="btn btn-edenred fw-semibold">Acessar o sistema</a>
     {% else %}
-    <a href="{{ url_for('main.cadastro') }}" class="btn btn-light btn-lg fw-semibold">
+    <a href="{{ url_for('main.cadastro') }}" class="btn btn-edenred fw-semibold">
         <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Cadastrar-se agora
     </a>
     {% endif %}
