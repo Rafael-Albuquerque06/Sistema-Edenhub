@@ -4,6 +4,8 @@ Sistema completo para gestão de cross-selling e comunicação interna, desenvol
 
 **Acesse online:** https://sistema-edenhub.onrender.com
 
+> ⏱️ **Hospedado no plano gratuito do Render.** Após um período sem requisições, o serviço fica inativo e a **primeira visita pode demorar alguns segundos** para carregar (cold start, enquanto o servidor volta a subir). As visitas seguintes são instantâneas; após ~15 minutos sem acesso, ele volta a "dormir".
+
 ## 🚀 Funcionalidades Principais
 
 ### 🤝 Gestão de Cross-Selling
@@ -158,7 +160,9 @@ O chat em tempo real exige um único processo do gunicorn:
 gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --worker-class gthread wsgi:app
 ```
 
-No Render (render.yaml): `flask db upgrade` roda antes do start, e a `DATABASE_URI` não vem versionada (configure no dashboard).
+No Render (serviço Docker): o container executa `run_migrations.py` no boot (aplica as migrations e lida com schemas legados) antes do gunicorn, e a `DATABASE_URI` não vem versionada (configure no dashboard).
+
+**Plano gratuito:** o serviço está no free tier do Render, que hiberna a aplicação após ~15 minutos sem requisições. Em um acesso frio, o boot do serviço (build em cache + worker) leva alguns segundos até a página carregar.
 
 ## 🔒 Segurança
 
