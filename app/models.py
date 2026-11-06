@@ -1,6 +1,7 @@
 from app import db, bcrypt
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from flask_login import UserMixin
+
 
 
 class Usuario(db.Model, UserMixin):
@@ -20,6 +21,39 @@ class Usuario(db.Model, UserMixin):
 
     def check_senha(self, senha):
         return bcrypt.check_password_hash(self.senha_hash, senha.encode('utf-8'))
+
+
+
+class BusinessUnit(db.Model):
+    """BU (Business Unit) do catálogo Edenred."""
+    __tablename__ = 'business_unit'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), unique=True, nullable=False)
+
+
+
+class Produto(db.Model):
+    """Produto comercializável, vinculado a BUs nas indicações."""
+    __tablename__ = 'produto'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), unique=True, nullable=False)
+
+
+
+empresa_bus = db.Table(
+    'empresa_bus',
+    db.Column('empresa_id', db.Integer, db.ForeignKey('empresa.id'), primary_key=True),
+    db.Column('business_unit_id', db.Integer, db.ForeignKey('business_unit.id'), primary_key=True),
+)
+
+indicacao_produtos = db.Table(
+    'indicacao_produtos',
+    db.Column('indicacao_id', db.Integer, db.ForeignKey('indicacao.id'), primary_key=True),
+    db.Column('produto_id', db.Integer, db.ForeignKey('produto.id'), primary_key=True),
+)
+
 
 
 class Empresa(db.Model):
@@ -45,17 +79,16 @@ class Empresa(db.Model):
 
     responsavel_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)
     is_client = db.Column('eh_cliente', db.Boolean, default=False)
-    contracted_business_units = db.Column('bus_contratados', db.String(500))
     data_cadastro = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     responsavel = db.relationship('Usuario', backref=db.backref('empresas_responsavel', lazy=True))
+    business_units = db.relationship('BusinessUnit', secondary=empresa_bus, backref='empresas')
 
     @property
     def bus_list(self):
-        """Retorna a lista de BUs contratados como lista de strings."""
-        if not self.contracted_business_units:
-            return []
-        return [bu.strip() for bu in self.contracted_business_units.split(',') if bu.strip()]
+        """Retorna a lista de nomes de BUs contratados."""
+        return [bu.nome for bu in self.business_units]
+
 
 
 class Indicacao(db.Model):
@@ -65,7 +98,6 @@ class Indicacao(db.Model):
     empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     bu_indicado = db.Column(db.String(100), nullable=False)
-    produtos_escolhidos = db.Column(db.String(500))
 
     quantidade_caminhoes = db.Column(db.Integer)
     quantidade_funcionarios = db.Column(db.Integer)
@@ -82,6 +114,13 @@ class Indicacao(db.Model):
 
     empresa = db.relationship('Empresa', backref=db.backref('indicacoes', lazy=True))
     usuario = db.relationship('Usuario', backref=db.backref('indicacoes', lazy=True))
+    produtos = db.relationship('Produto', secondary=indicacao_produtos, backref='indicacoes')
+
+    @property
+    def produtos_lista(self):
+        """Retorna a lista de nomes de produtos indicados."""
+        return [p.nome for p in self.produtos]
+
 
 
 class Conversa(db.Model):
@@ -94,6 +133,12 @@ class Conversa(db.Model):
 
     usuario1 = db.relationship('Usuario', foreign_keys=[usuario1_id], backref=db.backref('conversas_iniciadas', lazy=True))
     usuario2 = db.relationship('Usuario', foreign_keys=[usuario2_id], backref=db.backref('conversas_recebidas', lazy=True))
+
+    @property
+    def room(self):
+        """Nome da sala SocketIO para esta conversa."""
+        return f'conversa_{self.id}'
+
 
 
 class Mensagem(db.Model):

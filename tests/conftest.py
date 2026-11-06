@@ -11,11 +11,7 @@ from app import create_app, db
 @pytest.fixture
 def app():
     """Cria uma aplicação Flask configurada para testes com banco in-memory."""
-    app = create_app()
-    app.config['TESTING'] = True
-    app.config['SECRET_KEY'] = 'test-secret-key'
-    app.config['DATABASE_URI'] = 'sqlite:///:memory:'
-    app.config['WTF_CSRF_ENABLED'] = False
+    app = create_app('testing')
 
     with app.app_context():
         db.create_all()
@@ -54,7 +50,7 @@ def empresa(app, usuario):
     """Cria uma empresa de teste no banco e retorna seus dados."""
     with app.app_context():
         from app.models import Empresa, Usuario
-        u = Usuario.query.get(usuario['id'])
+        u = db.session.get(Usuario, usuario['id'])
         e = Empresa(
             cnpj='11222333000181',
             razao_social='Empresa Teste LTDA',
