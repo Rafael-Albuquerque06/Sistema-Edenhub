@@ -3,20 +3,20 @@
 {% block title %}Edenhub - Gestão de Cross-Selling{% endblock %}
 
 {% block content %}
-<!-- HERO -->
-<div class="hero-edenred text-white text-center py-5 px-4">
-    <div class="py-md-3">
+<!-- HERO (centrado minimalista) -->
+<div class="hero-edenred landing-hero text-white text-center py-5 px-4">
+    <div class="py-lg-4">
+        <p class="eyebrow eyebrow-light mb-3">Gestão de cross-selling · Comunicação interna</p>
         <h1 class="display-3 mb-3">Edenhub</h1>
-        <p class="lead mb-4">
-            Sistema de gestão de cross-selling e comunicação interna para otimizar
-            processos comerciais e facilitar a colaboração entre equipes.
+        <p class="lead mx-auto mb-4">
+            O caminho simples entre as unidades de negócio Edenred
+            e as necessidades dos seus clientes.
         </p>
         <div class="d-flex justify-content-center flex-wrap gap-3">
             {% if current_user.is_authenticated %}
             <a href="{{ url_for('main.home') }}" class="btn btn-light btn-lg fw-semibold">
                 <i class="bi bi-arrow-right-circle me-2" aria-hidden="true"></i>Ir para o Sistema
             </a>
-            <a href="{{ url_for('main.logout') }}" class="btn btn-outline-light btn-lg">Sair</a>
             {% else %}
             <a href="{{ url_for('main.login') }}" class="btn btn-light btn-lg fw-semibold">
                 <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Entrar
@@ -24,32 +24,68 @@
             <a href="{{ url_for('main.cadastro') }}" class="btn btn-outline-light btn-lg">Cadastrar-se</a>
             {% endif %}
         </div>
+        {% if not current_user.is_authenticated %}
+        <a href="#funcionalidades" class="d-inline-block mt-4 small text-white-50">
+            <i class="bi bi-arrow-down me-1" aria-hidden="true"></i>Conhecer as funcionalidades
+        </a>
+        {% endif %}
     </div>
 </div>
 
 <!-- FAIXA DE PROVA -->
-<div class="row justify-content-center mb-5">
-    <div class="col-12 col-md-8">
+<section class="row justify-content-center mb-5" aria-label="Diferenciais do Edenhub">
+    <div class="col-12 col-md-10">
         <div class="d-flex flex-wrap justify-content-center gap-4">
             <span class="proof-item"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Onboarding em minutos</span>
             <span class="proof-item"><i class="bi bi-chat-heart" aria-hidden="true"></i> Chat em tempo real</span>
             <span class="proof-item"><i class="bi bi-database-check" aria-hidden="true"></i> Base única de clientes</span>
         </div>
     </div>
-</div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section id="como-funciona" class="row justify-content-center mb-5">
+    <div class="col-12 text-center mb-4">
+        <p class="eyebrow eyebrow-red mb-2">Como funciona</p>
+        <h2>Do cadastro à indicação em 3 passos</h2>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="how-step text-center px-3">
+            <div class="step-num" aria-hidden="true">01</div>
+            <h3 class="h5 fw-semibold">Cadastre-se</h3>
+            <p class="text-muted mb-0">Crie sua conta gratuita em poucos minutos.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="how-step text-center px-3">
+            <div class="step-num" aria-hidden="true">02</div>
+            <h3 class="h5 fw-semibold">Consulte o CNPJ</h3>
+            <p class="text-muted mb-0">Pesquise a empresa e veja o que ela já usa.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="how-step text-center px-3">
+            <div class="step-num" aria-hidden="true">03</div>
+            <h3 class="h5 fw-semibold">Indique soluções</h3>
+            <p class="text-muted mb-0">Envie a indicação e acompanhe pelo chat.</p>
+        </div>
+    </div>
+</section>
 
 <!-- FUNCIONALIDADES -->
-<div class="row mb-5">
+<section id="funcionalidades" class="row mb-5">
     <div class="col-12 text-center mb-4">
-        <h2>O que o Edenhub faz</h2>
+        <p class="eyebrow eyebrow-red mb-2">Funcionalidades</p>
+        <h2>Tudo que o sistema entrega</h2>
     </div>
 
     <div class="col-md-4 mb-3">
         <div class="card card-edenred h-100">
             <div class="card-body text-center">
                 <div class="feature-icon" aria-hidden="true"><i class="bi bi-arrow-left-right"></i></div>
-                <h5 class="card-title">Cross-Selling</h5>
-                <p class="card-text text-muted">Consulta de empresas por CNPJ, seleção de BUs e catálogo dinâmico de produtos.</p>
+                <h3 class="h5 card-title">Cross-Selling</h3>
+                <p class="card-text text-muted">Consulta por CNPJ, catálogo dinâmico de produtos e indicação com controle de duplicidade.</p>
             </div>
         </div>
     </div>
@@ -58,8 +94,8 @@
         <div class="card card-edenred h-100">
             <div class="card-body text-center">
                 <div class="feature-icon" aria-hidden="true"><i class="bi bi-chat-dots"></i></div>
-                <h5 class="card-title">Comunicação Interna</h5>
-                <p class="card-text text-muted">Chat interno entre usuários com histórico completo de conversas.</p>
+                <h3 class="h5 card-title">Comunicação Interna</h3>
+                <p class="card-text text-muted">Chat em tempo real com status online e histórico completo.</p>
             </div>
         </div>
     </div>
@@ -68,27 +104,23 @@
         <div class="card card-edenred h-100">
             <div class="card-body text-center">
                 <div class="feature-icon" aria-hidden="true"><i class="bi bi-people"></i></div>
-                <h5 class="card-title">Gestão de Clientes</h5>
-                <p class="card-text text-muted">Consulta de clientes com filtros e dashboard de pendências.</p>
+                <h3 class="h5 card-title">Gestão de Clientes</h3>
+                <p class="card-text text-muted">Consulta filtrada, pendências e responsáveis em um só painel.</p>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- STACK -->
-<div class="row mb-5">
-    <div class="col-12 text-center mb-3">
-        <h2>Tecnologias</h2>
-    </div>
-    <div class="col-12 text-center">
-        <span class="badge-edenred me-2 mb-2 d-inline-block">Python</span>
-        <span class="badge-edenred me-2 mb-2 d-inline-block">Flask</span>
-        <span class="badge-edenred me-2 mb-2 d-inline-block">SQLAlchemy</span>
-        <span class="badge-edenred me-2 mb-2 d-inline-block">SQLite</span>
-        <span class="badge-edenred me-2 mb-2 d-inline-block">Flask-SocketIO</span>
-        <span class="badge-edenred me-2 mb-2 d-inline-block">Flask-Login</span>
-        <span class="badge-edenred me-2 mb-2 d-inline-block">Bootstrap 5</span>
-        <span class="badge-edenred d-inline-block mb-2">Alembic</span>
-    </div>
-</div>
+<!-- CTA FINAL -->
+<section class="landing-cta text-white text-center py-5 px-4 mb-5" aria-label="Comece agora">
+    <p class="eyebrow eyebrow-light mb-2">Pronto para começar?</p>
+    <h2 class="h3 fw-bold mb-3">Transforme indicações em contratações</h2>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('main.home') }}" class="btn btn-light btn-lg fw-semibold">Acessar o sistema</a>
+    {% else %}
+    <a href="{{ url_for('main.cadastro') }}" class="btn btn-light btn-lg fw-semibold">
+        <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Cadastrar-se agora
+    </a>
+    {% endif %}
+</section>
 {% endblock %}

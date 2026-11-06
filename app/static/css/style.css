@@ -735,6 +735,52 @@ button:disabled, a.btn-loading {
   }
 }
 
+/* --- HERO da landing (gradiente Edenred) --- */
+.landing-hero {
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
+}
+
+.landing-hero .lead {
+  max-width: 44rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Eyebrows editoriais (labels de seção) --- */
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.eyebrow-light { color: rgb(255 255 255 / 0.78); }
+.eyebrow-red { color: var(--edenred-primary); }
+
+/* --- Como funciona (números ghosts) --- */
+.how-step .step-num {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: rgb(139 0 0 / 0.16);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+/* --- CTA final em faixa --- */
+.landing-cta {
+  background:
+    radial-gradient(ellipse 60% 80% at 15% 15%, rgb(255 255 255 / 0.12), transparent 60%),
+    linear-gradient(120deg, var(--edenred-dark) 0%, var(--edenred-primary) 50%, var(--edenred-secondary) 100%);
+  border-radius: 1.35rem;
+  box-shadow: 0 24px 60px -24px rgb(90 0 0 / 0.55);
+}
+
 /* --- Portfolio: imagens responsivas e CTAs --- */
 
 .portfolio-img {
@@ -902,6 +948,7 @@ button:disabled, a.btn-loading {
   h1 { font-size: 2rem; }
   h2 { font-size: 1.6rem; }
   .hero-edenred .display-3 { font-size: 2.5rem; }
+  .landing-hero { padding-top: 3rem; padding-bottom: 3rem; }
   .card-edenred > .card-body { padding: 1.25rem; }
   .card-header-edenred { padding: 1.1rem 1.25rem; }
 }
