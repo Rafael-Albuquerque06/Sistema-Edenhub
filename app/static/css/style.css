@@ -584,11 +584,22 @@ button:disabled, a.btn-loading {
   background: var(--edenred-primary);
 }
 
-/* --- Portfolio: imagens responsivas --- */
+/* --- Portfolio: imagens responsivas e CTAs --- */
 .portfolio-img {
+  width: 100%;
   max-width: 100%;
-  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
   display: block;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 768px) {
+  .portfolio-cta .btn {
+    width: 100%;
+    min-height: 44px;
+  }
 }
 
 /* --- HERO da landing (gradiente Edenred) --- */

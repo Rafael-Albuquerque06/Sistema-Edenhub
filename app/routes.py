@@ -30,6 +30,7 @@ from app.services import (
     listar_outros_usuarios,
     listar_clientes,
     contar_metricas,
+    listar_portfolio,
 )
 from app.api_client import consultar_cnpj, consultar_cep
 
@@ -126,8 +127,8 @@ def home():
 @main_bp.route('/portfolio')
 @login_required
 def portfolio():
-    bus = ['Edenred Pay', 'Ticket Log', 'Ticket Serviços']
-    return render_template('portfolio.html', bus=bus)
+    itens = listar_portfolio()
+    return render_template('portfolio.html', itens=itens)
 
 
 @main_bp.route('/crosselling', methods=['GET', 'POST'])

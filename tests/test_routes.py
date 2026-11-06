@@ -79,3 +79,27 @@ def test_pagina_404(client):
     """Deve retornar 404 para rota inexistente."""
     resp = client.get('/rota-inexistente')
     assert resp.status_code == 404
+
+
+def test_pagina_portfolio(app, client):
+    """Portfólio deve listar as BUs do catálogo com imagem, CTA e compartilhamento."""
+    client.post('/cadastro', data={
+        'nome': 'Usuario Portfolio',
+        'email': 'port@exemplo.com',
+        'telefone': '11955554444',
+        'senha': 'senha123',
+        'confirmar_senha': 'senha123',
+    })
+    resp = client.post('/login', data={
+        'usuario_login': 'port@exemplo.com',
+        'senha': 'senha123',
+    }, follow_redirects=True)
+    assert resp.status_code == 200
+
+    html = client.get('/portfolio').data.decode()
+    assert 'Catálogo de Produtos/Serviços' in html
+    assert 'Edenred Pay' in html
+    assert 'Ticket Log' in html
+    assert 'Ticket Serviços' in html
+    assert 'portfolio-img' in html
+    assert 'whatsapp-share' in html

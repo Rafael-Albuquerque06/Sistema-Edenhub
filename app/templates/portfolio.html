@@ -1,98 +1,72 @@
 {% extends 'base.html' %}
 
+{% block title %}Portfólio - Edenhub{% endblock %}
+
 {% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-1">Catálogo de Produtos/Serviços</h1>
+        <p class="text-muted mb-0">
+            Conheça as unidades de negócio Edenred que você pode indicar aos seus clientes.
+        </p>
+    </div>
+</div>
 
-<div class="row">
-    <div class="col-12 h-100">
-        <h1 class="text-center mb-4 text-dark">Catálogo de Produtos/Serviços</h1>
+{% for item in itens %}
+<div class="row align-items-center mb-4" aria-label="{{ item.nome }}">
+    <!-- IMAGEM (trocada de lado quando a seção é par) -->
+    <div class="col-12 col-lg-5{% if loop.index is divisibleby(2) %} order-lg-2{% endif %} mb-3 mb-lg-0">
+        <img src="{{ url_for('static', filename=item.imagem) }}" alt="{{ item.alt }}"
+            class="portfolio-img" loading="lazy">
+    </div>
 
-        <div class="row display: flex; alin-items: center">
-            {% for bu in bus %}
-            <div class="col-12 md-4 mb-4">
-                <div class="card card-edenred h-100">
-                    <div class="card-body fluid">
-                        <h5 class="card-title text-dark text-center fw-bold">{{ bu }}</h5>
-                        <p class="card-text text-dark">
-                            {% if bu == 'Edenred Pay' %}
-                        <div class="row">
-                            <div class="col 6">
-                                <img src="{{url_for('static', filename='img/pay.png')}}" alt="Edenred Pay"
-                                    class="rounded-circle portfolio-img">
-                            </div>
-                            <div class="col 6 mt-5 text-center">
-                                <h4 class="fw-bold ">Simplificamo e otimizamos o gerenciamento das suas despesas.</h4>
-                                <br>
-                                <h4 class="fw-bold">Facilitamos o dia a dia da sua empresa e dos seus colaboradores.
-                                </h4>
-                                <br>
-                                <h4 class="fw-bold">Desburocratizamos e automatizamos os pagamentos de terceiros e
-                                    bonificações.</h4>
-                                <br>
-                                <h4 class="fw-bold">Tranformamos a rotina com inovação e eficiência.</h4>
+    <!-- CONTEÚDO -->
+    <div class="col-12 col-lg-7">
+        <div class="card card-edenred h-100 mb-0">
+            <div class="card-body">
+                <h2 class="card-title mb-3">{{ loop.index }}. {{ item.nome }}</h2>
+                <p class="lead mb-3">{{ item.resumo }}</p>
+                <ul class="text-dark mb-3 ps-3">
+                    {% for destaque in item.destaques %}
+                    <li class="mb-2">{{ destaque }}</li>
+                    {% endfor %}
+                </ul>
+                {% if item.contato %}
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>{{ item.contato }}
+                </p>
+                {% endif %}
 
-                                <a href="{{ url_for('main.crosselling') }}"
-                                    class="btn btn-danger btn-lg mt-5 rounded-pill shadow">Contrate
-                                    agora</a>
-
-                                <a href="" class="btn btn-success btn-lg mt-5 rounded-pill shadow">Compartilhar via
-                                    Whatssap</a>
-                            </div>
-                        </div>
-                        {% elif bu == 'Ticket Log' %}
-                        <div class="row top-0 mb-5">
-                            <div class="col-12 alin-items-center text-center mb-4">
-                                <img src="{{url_for('static', filename='img/mobilidade2.png')}}" alt="Ticket log"
-                                    class="rounded-pill portfolio-img">
-                            </div>
-                            <hr>
-                            <div class="col-3 p-4 m-5">
-                                <h4 class="fw-bold">Gestão de combustível com foco em segurança e economia.</h4>
-                            </div>
-                            <div class="col-6 p-3 m-5">
-                                <h4 class="fw-bold">Edenred Ticket log é lider em soluções de mobilidade e é um parceiro
-                                    que indico para alcançar soluções de mobilidade.</h4>
-                            </div>
-                            <div class="col-3">
-                                <h5 class="text-danger m-5">Fale comigo para saber mais! www.edenred.com </h5>
-                            </div>
-                            <div class="col-9 mt-5 text-center">
-                                <a href="{{ url_for('main.crosselling') }}"
-                                    class="btn btn-danger btn-lg mt-5 rounded-pill shadow">Contrate
-                                    agora</a>
-                                <a href="" class="btn btn-success btn-lg mt-5 rounded-pill shadow">Compartilhar via
-                                    Whatssap</a>
-                                <img src="{{url_for('static', filename='img/estampa.png')}}" alt="logo"
-                                    class="border border-dark rounded-pill p-3 portfolio-img float-end">
-                            </div>
-                        </div>
-                        {% elif bu == 'Ticket Serviços' %}
-                        <div class="row">
-                            <div class="col 6 mt-4 text-center">
-                                <h1 class="fw-bold">Ticket restaurante: o seu vale refeição completo</h1>
-
-                                <h5 class="m-5">Liberdade de escolha é o que deixa qualquer refeição mais saborosa.Com o
-                                    nosso Ticket Restaurante em mão ,sua equipe tem muito mais opções para se alimentar
-                                    de forma saúdavel e deliciosa.Tudo isso por conta de uma rede com cerca de 720mil
-                                    estabelecimentos credenciados que aceitem nosso vale refeição.</h5>
-
-                                <a href="{{ url_for('main.crosselling') }}"
-                                    class="btn btn-danger btn-lg mt-5 rounded-pill shadow">Contrate
-                                    agora</a>
-                                <a href="" class="btn btn-success btn-lg mt-5 rounded-pill shadow">Compartilhar via
-                                    Whatssap</a>
-                            </div>
-                            <div class="col 6">
-                                <img src="{{url_for('static', filename='img/beneficio.png')}}" alt="Ticket Serviços"
-                                    class="float-end portfolio-img">
-                            </div>
-                        </div>
-                        {% endif %}
-                        </p>
-                    </div>
+                <div class="portfolio-cta d-flex flex-wrap gap-2 mt-3">
+                    <a href="{{ url_for('main.crosselling') }}" class="btn btn-edenred flex-grow-1">
+                        <i class="bi bi-arrow-up-right-circle me-1" aria-hidden="true"></i>Contrate agora
+                    </a>
+                    <button type="button" class="btn btn-outline-edenred flex-grow-1 whatsapp-share"
+                        data-produto="{{ item.nome }}"
+                        aria-label="Compartilhar {{ item.nome }} via WhatsApp">
+                        <i class="bi bi-whatsapp me-1" aria-hidden="true"></i>Compartilhar via WhatsApp
+                    </button>
                 </div>
             </div>
-            {% endfor %}
         </div>
     </div>
 </div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Compartilhamento real: wa.me com texto + URL do site (sem API, sem cadastro)
+    document.addEventListener('DOMContentLoaded', function () {
+        var urlSite = window.location.origin;
+        document.querySelectorAll('.whatsapp-share').forEach(function (botao) {
+            botao.addEventListener('click', function () {
+                var texto = encodeURIComponent(
+                    botao.dataset.produto + ' - conheça no Edenhub: ' + urlSite
+                );
+                window.open('https://wa.me/?text=' + texto, '_blank', 'noopener');
+            });
+        });
+    });
+</script>
 {% endblock %}

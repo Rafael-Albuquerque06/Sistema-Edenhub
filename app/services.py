@@ -11,6 +11,51 @@ from app.utils import limpar_cnpj, validar_cnpj, formatar_cnpj
 
 TELEFONE_DIGITOS = re.compile(r'\D')
 
+# Catálogo de BUs do portfólio (conteúdo corrigido e centralizado fora do template)
+CATALOGO_PORTFOLIO = [
+    {
+        'nome': 'Edenred Pay',
+        'imagem': 'img/pay.png',
+        'alt': 'Visão geral da solução Edenred Pay',
+        'resumo': 'Simplificamos e otimizamos o gerenciamento das suas despesas.',
+        'destaques': [
+            'Facilitamos o dia a dia da sua empresa e dos seus colaboradores.',
+            'Desburocratizamos e automatizamos os pagamentos de terceiros e bonificações.',
+            'Transformamos a rotina com inovação e eficiência.',
+        ],
+        'contato': None,
+    },
+    {
+        'nome': 'Ticket Log',
+        'imagem': 'img/mobilidade2.png',
+        'alt': 'Solução de mobilidade Ticket Log',
+        'resumo': ('Edenred Ticket Log é líder em soluções de mobilidade e um parceiro que '
+                   'indico para alcançar diferentes soluções de mobilidade.'),
+        'destaques': [
+            'Gestão de combustível com foco em segurança e economia.',
+        ],
+        'contato': 'Fale comigo para saber mais! www.edenred.com',
+    },
+    {
+        'nome': 'Ticket Serviços',
+        'imagem': 'img/beneficio.png',
+        'alt': 'Vale-refeição Ticket Serviços',
+        'resumo': 'Ticket Restaurante: o seu vale-refeição completo.',
+        'destaques': [
+            'Liberdade de escolha é o que deixa qualquer refeição mais saborosa.',
+            'Com o Ticket Restaurante em mãos, sua equipe tem muito mais opções para se '
+            'alimentar de forma saudável e deliciosa.',
+            'Rede com cerca de 720 mil estabelecimentos credenciados.',
+        ],
+        'contato': None,
+    },
+]
+
+
+def listar_portfolio():
+    """Retorna os itens do catálogo de produtos/serviços para o portfólio."""
+    return CATALOGO_PORTFOLIO
+
 def _get_or_create(modelo, nome):
     """Busca um registro pelo nome único ou cria um novo."""
     registro = db.session.scalar(sa.select(modelo).where(modelo.nome == nome))
