@@ -33,7 +33,7 @@
                             <td class="text-dark">{{ indicacao.empresa.razao_social }}</td>
                             <td class="text-dark">{{ indicacao.empresa.cnpj[:2] }}.{{ indicacao.empresa.cnpj[2:5] }}.{{ indicacao.empresa.cnpj[5:8] }}/{{ indicacao.empresa.cnpj[8:12] }}-{{ indicacao.empresa.cnpj[12:] }}</td>
                             <td class="text-dark">{{ indicacao.bu_indicado }}</td>
-                            <td class="text-dark">{{ indicacao.produtos_escolhidos }}</td>
+                            <td class="text-dark">{{ indicacao.produtos_lista|join(', ') }}</td>
                             <td class="text-dark">{{ indicacao.data_indicacao.strftime('%d/%m/%Y') }}</td>
                             <td class="text-center">
                                 {% if indicacao.status == 'Pendente' %}

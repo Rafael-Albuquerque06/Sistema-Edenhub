@@ -12,15 +12,22 @@
                     <a href="{{ url_for('main.comunicacao') }}" class="btn btn-outline-edenred btn-sm me-3">
                         <i class="bi bi-arrow-left"></i>
                     </a>
-                    <img src="{{ url_for('static', filename='data/img_user/' ~ outro_usuario.foto) }}"
-                         class="avatar me-3">
+                    <span class="position-relative">
+                        <img src="{{ url_for('static', filename='data/img_user/' ~ outro_usuario.foto) }}"
+                             class="avatar me-3" alt="Foto de {{ outro_usuario.nome }}">
+                        <span class="status-dot {{ 'online' if outro_online else 'offline' }} position-absolute"
+                              id="outroStatusDot"
+                              data-user-id="{{ outro_usuario.id }}"
+                              style="bottom:2px; right:2px; border:2px solid #fff;"></span>
+                    </span>
                     <div>
                         <h5 class="card-title mb-0 text-dark">
                             Conversa com {{ outro_usuario.nome }}
                         </h5>
                         <small class="text-muted">
+                            <span id="outroStatusTexto">{{ 'Online' if outro_online else 'Offline' }}</span>
                             {% if outro_usuario.skype %}
-                            <i class="bi bi-skype me-1"></i> {{ outro_usuario.skype }}
+                            • <i class="bi bi-skype me-1"></i> {{ outro_usuario.skype }}
                             {% endif %}
                         </small>
                     </div>
@@ -52,13 +59,13 @@
             </div>
 
             <!-- ÁREA DE MENSAGENS -->
-            <div class="card-body p-4 message-area">
+            <div class="card-body p-4 message-area" aria-live="polite">
                 {% if mensagens %}
                 {% for mensagem in mensagens %}
                 <div class="mb-3 d-flex {% if mensagem.remetente_id == current_user.id %}justify-content-end{% else %}justify-content-start{% endif %}">
                     {% if mensagem.remetente_id != current_user.id %}
                     <img src="{{ url_for('static', filename='data/img_user/' ~ mensagem.remetente.foto) }}"
-                         class="avatar me-3 align-self-start">
+                         class="avatar me-3 align-self-start" alt="Foto de {{ mensagem.remetente.nome }}">
                     {% endif %}
 
                     <div class="{% if mensagem.remetente_id == current_user.id %}text-end{% endif %}" style="max-width: 70%;">
@@ -79,27 +86,34 @@
 
                     {% if mensagem.remetente_id == current_user.id %}
                     <img src="{{ url_for('static', filename='data/img_user/' ~ current_user.foto) }}"
-                         class="avatar ms-3 align-self-start">
+                         class="avatar ms-3 align-self-start" alt="Foto de {{ current_user.nome }}">
                     {% endif %}
                 </div>
                 {% endfor %}
                 {% else %}
-                <div class="text-center py-5">
+                <div class="text-center py-5" id="emptyMessages">
                     <i class="bi bi-chat-text display-1 text-muted mb-3"></i>
                     <h5 class="text-dark">Nenhuma mensagem ainda</h5>
                     <p class="text-muted">Inicie a conversa enviando sua primeira mensagem!</p>
                 </div>
                 {% endif %}
+
+                <!-- INDICADOR "DIGITANDO..." -->
+                <div class="typing-indicator d-none" id="typingIndicator" aria-live="polite">
+                    <span class="typing-dots"><span></span><span></span><span></span></span>
+                    <span id="typingTexto"></span>
+                </div>
             </div>
 
             <!-- FORMULÁRIO DE MENSAGEM -->
             <div class="card-footer bg-white border-top">
-                <form method="post" class="message-form">
+                <form method="post" class="message-form" id="messageForm">
                     {{ form.csrf_token }}
                     <div class="input-group">
                         {{ form.mensagem(class="form-control form-control-custom message-textarea",
-                                        placeholder="Digite sua mensagem...", rows="2") }}
-                        <button type="submit" class="btn btn-edenred">
+                                        placeholder="Digite sua mensagem...", rows="2",
+                                        **{'aria-label': 'Mensagem'}) }}
+                        <button type="submit" class="btn btn-edenred" id="btnEnviar" aria-label="Enviar mensagem">
                             <i class="bi bi-send"></i>
                         </button>
                     </div>
@@ -123,5 +137,140 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     });
+</script>
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Sem SocketIO (CDN bloqueada), o formulário HTTP cai no fallback padrão
+    if (typeof io === 'undefined') { return; }
+
+    const conversaId = {{ conversa.id }};
+    const meuId = {{ current_user.id }};
+    const outroId = {{ outro_usuario.id }};
+    const areaMensagens = document.querySelector('.message-area');
+    const typingIndicator = document.getElementById('typingIndicator');
+
+    function rolarParaBaixo() {
+        if (areaMensagens) { areaMensagens.scrollTop = areaMensagens.scrollHeight; }
+    }
+    rolarParaBaixo();
+
+    const socket = io();
+    let pronto = false;
+
+    socket.on('connect', function () {
+        socket.emit('entrar', { conversa_id: conversaId }, function (res) {
+            pronto = !!(res && res.ok);
+        });
+    });
+
+    // ---- presença ----
+    function atualizarStatus(online) {
+        const dot = document.getElementById('outroStatusDot');
+        const texto = document.getElementById('outroStatusTexto');
+        if (dot) {
+            dot.classList.toggle('online', online);
+            dot.classList.toggle('offline', !online);
+        }
+        if (texto) { texto.textContent = online ? 'Online' : 'Offline'; }
+    }
+    socket.on('user_status', function (d) {
+        if (d.user_id === outroId) { atualizarStatus(d.online); }
+        if (d.user_id === meuId && !d.online) { pronto = false; }  // perdeu a conexão
+    });
+
+    // ---- "digitando..." ----
+    const inputMensagem = document.getElementById('mensagem');
+    let digitando = false;
+    let timerDigitando = null;
+
+    function enviarDigitando(estado) {
+        digitando = estado;
+        socket.emit('digitando', { conversa_id: conversaId, digitando: estado });
+    }
+    if (inputMensagem) {
+        inputMensagem.addEventListener('input', function () {
+            clearTimeout(timerDigitando);
+            if (!digitando && inputMensagem.value.trim()) { enviarDigitando(true); }
+            timerDigitando = setTimeout(function () { enviarDigitando(false); }, 2000);
+        });
+    }
+    socket.on('digitando', function (d) {
+        if (d.user_id !== meuId && typingIndicator) {
+            typingIndicator.classList.toggle('d-none', !d.digitando);
+            document.getElementById('typingTexto').textContent = d.digitando
+                ? (d.nome || 'Contato') + ' está digitando...' : '';
+            if (d.digitando) { rolarParaBaixo(); }
+        }
+    });
+
+    // ---- mensagens ----
+    function criarBolha(d) {
+        const meu = d.remetente_id === meuId;
+        const linha = document.createElement('div');
+        linha.className = 'mb-3 d-flex ' + (meu ? 'justify-content-end' : 'justify-content-start');
+        linha.dataset.msgId = d.id;
+
+        const caixa = document.createElement('div');
+        caixa.className = meu ? 'text-end' : '';
+        caixa.style.maxWidth = '70%';
+
+        const meta = document.createElement('div');
+        meta.className = 'd-flex align-items-center mb-1 ' + (meu ? 'justify-content-end' : '');
+        const nome = document.createElement('small');
+        nome.className = 'text-muted me-2';
+        nome.textContent = d.remetente_nome;
+        const hora = document.createElement('small');
+        hora.className = 'text-muted';
+        hora.textContent = d.data;
+        meta.appendChild(nome); meta.appendChild(hora);
+
+        const bolha = document.createElement('div');
+        bolha.className = 'message-bubble ' + (meu ? 'message-sent' : 'message-received');
+        bolha.textContent = d.texto;
+
+        caixa.appendChild(meta); caixa.appendChild(bolha);
+        linha.appendChild(caixa);
+
+        // avatar do interlocutor nas mensagens recebidas
+        if (!meu) {
+            const avatar = document.createElement('img');
+            avatar.className = 'avatar me-3 align-self-start';
+            avatar.src = '{{ url_for('static', filename='data/img_user/') }}' + '{{ outro_usuario.foto }}';
+            avatar.alt = 'Foto de ' + d.remetente_nome;
+            linha.insertBefore(avatar, caixa);
+        }
+        return linha;
+    }
+
+    socket.on('nova_mensagem', function (d) {
+        if (d.conversa_id !== conversaId) { return; }
+        const vazio = document.getElementById('emptyMessages');
+        if (vazio) { vazio.remove(); }
+        areaMensagens.insertBefore(criarBolha(d), typingIndicator);
+        rolarParaBaixo();
+    });
+
+    // ---- envio ----
+    const form = document.getElementById('messageForm');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            if (!pronto) { return; }  // fallback HTTP (POST padrão)
+            e.preventDefault();
+            const texto = inputMensagem.value.trim();
+            if (!texto) { return; }
+            const botao = document.getElementById('btnEnviar');
+            botao.disabled = true;
+            socket.emit('mensagem', { conversa_id: conversaId, texto: texto }, function (res) {
+                botao.disabled = false;
+                if (res && res.ok) {
+                    inputMensagem.value = '';
+                    enviarDigitando(false);
+                    inputMensagem.focus();
+                }
+            });
+        });
+    }
+});
 </script>
 {% endblock %}

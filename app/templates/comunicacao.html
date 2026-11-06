@@ -20,19 +20,27 @@
                 <h5 class="card-title mb-0 text-dark">Usuários</h5>
             </div>
             <div class="card-body">
-                <div class="list-group">
+                <div class="list-group" id="listaUsuarios">
                     {% for usuario in outros_usuarios %}
+                    {% set online = usuario.id in usuarios_online %}
                     <a href="{{ url_for('main.nova_conversa', usuario_id=usuario.id) }}"
                         class="list-group-item list-group-item-action">
                         <div class="d-flex align-items-center">
-                            <img src="{{ url_for('static', filename='data/img_user/' ~ usuario.foto) }}"
-                                class="rounded-circle me-3 avatar">
-                            <div>
+                            <span class="position-relative">
+                                <img src="{{ url_for('static', filename='data/img_user/' ~ usuario.foto) }}"
+                                    class="rounded-circle me-3 avatar" alt="Foto de {{ usuario.nome }}">
+                                <span class="status-dot {{ 'online' if online else 'offline' }} position-absolute user-status-dot"
+                                      data-user-id="{{ usuario.id }}"
+                                      style="bottom:2px; right:10px; border:2px solid #fff;"></span>
+                            </span>
+                            <div class="flex-grow-1">
                                 <strong class="text-dark">{{ usuario.nome }}</strong><br>
                                 <small class="text-muted">{{ usuario.email }}</small>
                             </div>
                         </div>
                     </a>
+                    {% else %}
+                    <p class="text-center text-muted py-3 mb-0">Nenhum outro usuário cadastrado.</p>
                     {% endfor %}
                 </div>
             </div>
@@ -48,23 +56,35 @@
             <div class="card-body">
                 {% if conversas %}
                 <div class="list-group">
-                    {% for conversa in conversas %}
-                    {% set outro_usuario = conversa.usuario2 if conversa.usuario1_id == current_user.id else conversa.usuario1 %}
-                    {% set ultima_mensagem = conversa.mensagens|sort(attribute='data_envio')|last if conversa.mensagens else None %}
+                    {% for item in conversas %}
+                    {% set conversa = item.conversa %}
+                    {% set outro_usuario = item.outro_usuario %}
+                    {% set ultima_mensagem = item.ultima_mensagem %}
+                    {% set online = outro_usuario and outro_usuario.id in usuarios_online %}
 
                     <a href="{{ url_for('main.ver_conversa', conversa_id=conversa.id) }}"
                         class="list-group-item list-group-item-action">
                         <div class="d-flex align-items-center">
-                            <img src="{{ url_for('static', filename='data/img_user/' ~ outro_usuario.foto) }}"
-                                class="rounded-circle me-3 avatar-lg">
+                            <span class="position-relative">
+                                <img src="{{ url_for('static', filename='data/img_user/' ~ outro_usuario.foto) }}"
+                                    class="rounded-circle me-3 avatar-lg" alt="Foto de {{ outro_usuario.nome }}">
+                                <span class="status-dot {{ 'online' if online else 'offline' }} position-absolute conversa-status-dot"
+                                      data-user-id="{{ outro_usuario.id }}"
+                                      style="bottom:2px; right:14px; border:2px solid #fff;"></span>
+                            </span>
                             <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <strong class="text-dark">{{ outro_usuario.nome }}</strong>
-                                    {% if ultima_mensagem %}
-                                    <small class="text-muted">
-                                        {{ ultima_mensagem.data_envio|formatar_data_brasil }}
-                                    </small>
-                                    {% endif %}
+                                    <span class="d-flex align-items-center gap-2">
+                                        {% if item.nao_lidas > 0 %}
+                                        <span class="badge bg-danger rounded-pill">{{ item.nao_lidas }}</span>
+                                        {% endif %}
+                                        {% if ultima_mensagem %}
+                                        <small class="text-muted">
+                                            {{ ultima_mensagem.data_envio|formatar_data_brasil }}
+                                        </small>
+                                        {% endif %}
+                                    </span>
                                 </div>
                                 {% if ultima_mensagem %}
                                 <p class="mb-0 text-muted">
@@ -88,4 +108,19 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof io === 'undefined') { return; }
+    const socket = io();
+
+    socket.on('user_status', function (d) {
+        document.querySelectorAll('[data-user-id="' + d.user_id + '"]').forEach(function (dot) {
+            dot.classList.toggle('online', d.online);
+            dot.classList.toggle('offline', !d.online);
+        });
+    });
+});
+</script>
 {% endblock %}

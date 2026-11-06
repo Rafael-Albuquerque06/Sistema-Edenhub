@@ -19,16 +19,22 @@
 
 <!-- STATS CARDS -->
 <div class="row mb-4">
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ minhas_indicacoes }}</div>
+            <div class="stats-label">Minhas Indicações</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
         <div class="stats-card">
             <div class="stats-number">{{ minhas_pendencias }}</div>
             <div class="stats-label">Indicações Pendentes</div>
         </div>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <div class="stats-card">
-            <div class="stats-number">0</div>
-            <div class="stats-label">Vendas Concluídas</div>
+            <div class="stats-number">{{ total_clientes }}</div>
+            <div class="stats-label">Clientes no Sistema</div>
         </div>
     </div>
 </div>
