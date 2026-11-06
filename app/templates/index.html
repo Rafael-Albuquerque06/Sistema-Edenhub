@@ -4,40 +4,51 @@
 
 {% block content %}
 <!-- HERO -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card card-edenred text-center py-5">
-            <div class="card-body">
-                <h1 class="display-4 fw-bold mb-3 text-dark">Edenhub</h1>
-                <p class="lead text-muted mb-4">
-                    Sistema de gestão de cross-selling e comunicação interna para otimizar
-                    processos comerciais e facilitar a colaboração entre equipes.
-                </p>
-                <div class="d-flex justify-content-center gap-2">
-                    {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('main.home') }}" class="btn btn-edenred btn-lg">Ir para o Sistema</a>
-                    <a href="{{ url_for('main.logout') }}" class="btn btn-outline-edenred btn-lg">Sair</a>
-                    {% else %}
-                    <a href="{{ url_for('main.login') }}" class="btn btn-edenred btn-lg">Entrar</a>
-                    <a href="{{ url_for('main.cadastro') }}" class="btn btn-outline-edenred btn-lg">Cadastrar-se</a>
-                    {% endif %}
-                </div>
-            </div>
+<div class="hero-edenred text-white text-center py-5 px-4">
+    <div class="py-md-3">
+        <h1 class="display-3 mb-3">Edenhub</h1>
+        <p class="lead mb-4">
+            Sistema de gestão de cross-selling e comunicação interna para otimizar
+            processos comerciais e facilitar a colaboração entre equipes.
+        </p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.home') }}" class="btn btn-light btn-lg fw-semibold">
+                <i class="bi bi-arrow-right-circle me-2" aria-hidden="true"></i>Ir para o Sistema
+            </a>
+            <a href="{{ url_for('main.logout') }}" class="btn btn-outline-light btn-lg">Sair</a>
+            {% else %}
+            <a href="{{ url_for('main.login') }}" class="btn btn-light btn-lg fw-semibold">
+                <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Entrar
+            </a>
+            <a href="{{ url_for('main.cadastro') }}" class="btn btn-outline-light btn-lg">Cadastrar-se</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- FAIXA DE PROVA -->
+<div class="row justify-content-center mb-5">
+    <div class="col-12 col-md-8">
+        <div class="d-flex flex-wrap justify-content-center gap-4">
+            <span class="proof-item"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Onboarding em minutos</span>
+            <span class="proof-item"><i class="bi bi-chat-heart" aria-hidden="true"></i> Chat em tempo real</span>
+            <span class="proof-item"><i class="bi bi-database-check" aria-hidden="true"></i> Base única de clientes</span>
         </div>
     </div>
 </div>
 
 <!-- FUNCIONALIDADES -->
 <div class="row mb-5">
-    <div class="col-12">
-        <h2 class="text-center text-dark mb-4">Funcionalidades Principais</h2>
+    <div class="col-12 text-center mb-4">
+        <h2>O que o Edenhub faz</h2>
     </div>
 
     <div class="col-md-4 mb-3">
         <div class="card card-edenred h-100">
             <div class="card-body text-center">
-                <i class="bi bi-arrow-left-right fs-1 mb-3 text-edenred"></i>
-                <h5 class="card-title text-dark">Cross-Selling</h5>
+                <div class="feature-icon" aria-hidden="true"><i class="bi bi-arrow-left-right"></i></div>
+                <h5 class="card-title">Cross-Selling</h5>
                 <p class="card-text text-muted">Consulta de empresas por CNPJ, seleção de BUs e catálogo dinâmico de produtos.</p>
             </div>
         </div>
@@ -46,8 +57,8 @@
     <div class="col-md-4 mb-3">
         <div class="card card-edenred h-100">
             <div class="card-body text-center">
-                <i class="bi bi-chat-dots fs-1 mb-3 text-edenred"></i>
-                <h5 class="card-title text-dark">Comunicação Interna</h5>
+                <div class="feature-icon" aria-hidden="true"><i class="bi bi-chat-dots"></i></div>
+                <h5 class="card-title">Comunicação Interna</h5>
                 <p class="card-text text-muted">Chat interno entre usuários com histórico completo de conversas.</p>
             </div>
         </div>
@@ -56,8 +67,8 @@
     <div class="col-md-4 mb-3">
         <div class="card card-edenred h-100">
             <div class="card-body text-center">
-                <i class="bi bi-people fs-1 mb-3 text-edenred"></i>
-                <h5 class="card-title text-dark">Gestão de Clientes</h5>
+                <div class="feature-icon" aria-hidden="true"><i class="bi bi-people"></i></div>
+                <h5 class="card-title">Gestão de Clientes</h5>
                 <p class="card-text text-muted">Consulta de clientes com filtros e dashboard de pendências.</p>
             </div>
         </div>
@@ -66,18 +77,18 @@
 
 <!-- STACK -->
 <div class="row mb-5">
-    <div class="col-12">
-        <h2 class="text-center text-dark mb-4">Tecnologias</h2>
+    <div class="col-12 text-center mb-3">
+        <h2>Tecnologias</h2>
     </div>
     <div class="col-12 text-center">
-        <span class="badge-edenred me-2">Python</span>
-        <span class="badge-edenred me-2">Flask</span>
-        <span class="badge-edenred me-2">SQLAlchemy</span>
-        <span class="badge-edenred me-2">SQLite</span>
-        <span class="badge-edenred me-2">Flask-Login</span>
-        <span class="badge-edenred me-2">Flask-WTF</span>
-        <span class="badge-edenred me-2">Bootstrap 5</span>
-        <span class="badge-edenred">Alembic</span>
+        <span class="badge-edenred me-2 mb-2 d-inline-block">Python</span>
+        <span class="badge-edenred me-2 mb-2 d-inline-block">Flask</span>
+        <span class="badge-edenred me-2 mb-2 d-inline-block">SQLAlchemy</span>
+        <span class="badge-edenred me-2 mb-2 d-inline-block">SQLite</span>
+        <span class="badge-edenred me-2 mb-2 d-inline-block">Flask-SocketIO</span>
+        <span class="badge-edenred me-2 mb-2 d-inline-block">Flask-Login</span>
+        <span class="badge-edenred me-2 mb-2 d-inline-block">Bootstrap 5</span>
+        <span class="badge-edenred d-inline-block mb-2">Alembic</span>
     </div>
 </div>
 {% endblock %}

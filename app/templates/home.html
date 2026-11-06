@@ -17,22 +17,41 @@
     </div>
 </div>
 
+<!-- AÇÕES RÁPIDAS -->
+<div class="quick-actions d-flex flex-wrap align-items-center gap-3 mb-4">
+    <strong class="text-dark me-auto">
+        <i class="bi bi-lightning-charge-fill text-edenred me-2" aria-hidden="true"></i>Ações rápidas
+    </strong>
+    <a href="{{ url_for('main.crosselling') }}" class="btn btn-edenred btn-sm fw-semibold">
+        <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>Novo cross-selling
+    </a>
+    <a href="{{ url_for('main.comunicacao') }}" class="btn btn-outline-edenred btn-sm">
+        <i class="bi bi-chat-dots me-1" aria-hidden="true"></i>Conversar
+    </a>
+    <a href="{{ url_for('main.consulta_clientes') }}" class="btn btn-outline-edenred btn-sm">
+        <i class="bi bi-search me-1" aria-hidden="true"></i>Consultar cliente
+    </a>
+</div>
+
 <!-- STATS CARDS -->
 <div class="row mb-4">
     <div class="col-md-4 mb-3">
         <div class="stats-card">
+            <div class="stats-icon stats-icon--primary" aria-hidden="true"><i class="bi bi-arrow-left-right"></i></div>
             <div class="stats-number">{{ minhas_indicacoes }}</div>
             <div class="stats-label">Minhas Indicações</div>
         </div>
     </div>
     <div class="col-md-4 mb-3">
         <div class="stats-card">
+            <div class="stats-icon stats-icon--warning" aria-hidden="true"><i class="bi bi-hourglass-split"></i></div>
             <div class="stats-number">{{ minhas_pendencias }}</div>
             <div class="stats-label">Indicações Pendentes</div>
         </div>
     </div>
     <div class="col-md-4 mb-3">
         <div class="stats-card">
+            <div class="stats-icon stats-icon--neutral" aria-hidden="true"><i class="bi bi-people"></i></div>
             <div class="stats-number">{{ total_clientes }}</div>
             <div class="stats-label">Clientes no Sistema</div>
         </div>
@@ -41,16 +60,16 @@
 
 <!-- FUNCIONALIDADES PRINCIPAIS -->
 <div class="row mb-4">
-    <div class="col-12">
-        <h2 class="text-center text-dark mb-4">Módulos do Sistema</h2>
+    <div class="col-12 mb-3">
+        <h2 class="mb-0">Módulos do Sistema</h2>
     </div>
 
     <div class="col-md-4 mb-3">
         <a href="{{ url_for('main.crosselling') }}" class="text-decoration-none">
             <div class="card card-edenred funcionalidade-card h-100">
                 <div class="card-body text-center">
-                    <i class="bi bi-arrow-left-right fs-1 mb-3 text-edenred"></i>
-                    <h5 class="card-title text-dark">Cross-Selling</h5>
+                    <div class="feature-icon" aria-hidden="true"><i class="bi bi-arrow-left-right"></i></div>
+                    <h5 class="card-title">Cross-Selling</h5>
                     <p class="card-text text-muted">Iniciar processo de vendas por CNPJ</p>
                 </div>
             </div>
@@ -61,8 +80,8 @@
         <a href="{{ url_for('main.portfolio') }}" class="text-decoration-none">
             <div class="card card-edenred funcionalidade-card h-100">
                 <div class="card-body text-center">
-                    <i class="bi bi-briefcase fs-1 mb-3 text-edenred"></i>
-                    <h5 class="card-title text-dark">Portfólio</h5>
+                    <div class="feature-icon" aria-hidden="true"><i class="bi bi-briefcase"></i></div>
+                    <h5 class="card-title">Portfólio</h5>
                     <p class="card-text text-muted">Catálogo de produtos e BUs</p>
                 </div>
             </div>
@@ -73,8 +92,8 @@
         <a href="{{ url_for('main.consulta_clientes') }}" class="text-decoration-none">
             <div class="card card-edenred funcionalidade-card h-100">
                 <div class="card-body text-center">
-                    <i class="bi bi-search fs-1 mb-3 text-edenred"></i>
-                    <h5 class="card-title text-dark">Consulta Clientes</h5>
+                    <div class="feature-icon" aria-hidden="true"><i class="bi bi-search"></i></div>
+                    <h5 class="card-title">Consulta Clientes</h5>
                     <p class="card-text text-muted">Buscar e gerenciar clientes cadastrados</p>
                 </div>
             </div>
